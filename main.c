@@ -3,13 +3,13 @@
  */
 
 #include "stm32f10x.h"
-#include "hsv.h"
 
 TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 TIM_OCInitTypeDef TIM_OCInitStructure;
 
 void RCC_Configuration(void);
 void GPIO_Configuration(void);
+void NVIC_Configuration(void);
 
 #define STM32_DELAY_US_MULT 8
 
@@ -51,6 +51,62 @@ void pulse(__IO uint16_t *CCR)
     }
 }
 
+__IO uint16_t red_frame[8][8] = {
+    {0x0001, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000},
+    {0x0000, 0x0fff, 0x0fff, 0x0000, 0x0000, 0x0fff, 0x0fff, 0x0000},
+    {0x0000, 0x0fff, 0xffff, 0x0000, 0x0000, 0x0fff, 0xffff, 0x0000},
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000},
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000},
+    {0x0000, 0x0fff, 0x0000, 0x0000, 0x0001, 0x0000, 0x0fff, 0x0000},
+    {0x0000, 0x0000, 0x0fff, 0x0fff, 0x0fff, 0x0fff, 0x0000, 0x0000},
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000},
+};
+
+
+// Diagonal line test
+/*
+__IO uint16_t red_frame[8][8] = {
+    {0x0fff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000},
+    {0x0000, 0x0fff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000},
+    {0x0000, 0x0000, 0x0fff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000},
+    {0x0000, 0x0000, 0x0000, 0x0fff, 0x0000, 0x0000, 0x0000, 0x0000},
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0fff, 0x0000, 0x0000, 0x0000},
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0fff, 0x0000, 0x0000},
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0fff, 0x0000},
+    {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0fff},
+};
+*/
+
+uint8_t current_row = 0;
+__IO uint16_t *red[8];
+
+/**
+  * @brief  This function handles TIM7 global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void TIM7_IRQHandler(void)
+{
+    uint8_t i;
+
+    TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
+
+    GPIO_Write(GPIOB, 0);
+
+    for (i = 0; i < 8; i++) {
+        *red[i] = red_frame[current_row][i];
+    }
+
+    // Reset timer counts
+    TIM1->CNT = 0;
+    TIM2->CNT = 0;
+    TIM3->CNT = 0;
+
+    GPIO_Write(GPIOB, 1 << (current_row + 8));
+
+    current_row = (current_row + 1) % 8;
+}
+
 int main(void)
 {
     /*!< At this stage the microcontroller clock setting is already configured, 
@@ -60,19 +116,21 @@ int main(void)
        system_stm32f10x.c file
      */     
 
-    __IO uint16_t *red[] = {
-        &(TIM1->CCR1),
-        &(TIM1->CCR2),
-        &(TIM1->CCR3),
-        &(TIM1->CCR4),
-        &(TIM2->CCR2),
-        &(TIM2->CCR3),
-        &(TIM2->CCR4),
-        &(TIM3->CCR1),
-    };
+    red[0] = &(TIM1->CCR1);
+    red[1] = &(TIM1->CCR2);
+    red[2] = &(TIM1->CCR3);
+    red[3] = &(TIM1->CCR4);
+    red[4] = &(TIM2->CCR2);
+    red[5] = &(TIM2->CCR3);
+    red[6] = &(TIM2->CCR4);
+    red[7] = &(TIM3->CCR1);
+
 
     /* System Clocks Configuration */
     RCC_Configuration();
+
+    /* NVIC Configuration */
+    NVIC_Configuration();
 
     /* GPIO Configuration */
     GPIO_Configuration();
@@ -131,69 +189,36 @@ int main(void)
     TIM_ARRPreloadConfig(TIM3, ENABLE);
     TIM_Cmd(TIM3, ENABLE);
 
-    uint32_t i;
+
+    // TIM7 is used to time the row updates
+    TIM_TimeBaseStructure.TIM_Period = 24999;
+    TIM_TimeBaseStructure.TIM_Prescaler = 1;
+
+    TIM_TimeBaseInit(TIM7, &TIM_TimeBaseStructure);
+
+    /* TIM IT enable */
+    TIM_ITConfig(TIM7, TIM_IT_Update, ENABLE);
+
+    /* TIM enable counter */
+    TIM_Cmd(TIM7, ENABLE);
+
+
+    uint32_t i, j;
     uint32_t delay = 1000;
+    uint16_t brightness = 0;
+
     while (1) {
-        // 2x2 square test
+        // Brightness test
         /*
-        GPIO_Write(GPIOB, 0);
-        *red[0] = 0x8fff;
-        *red[1] = 0;
-        TIM1->CNT = 0;
-        GPIO_Write(GPIOB, 1 << 8);
-
-        delay_us(delay);
-
-        GPIO_Write(GPIOB, 0);
-        *red[0] = 0;
-        *red[1] = 0x8fff;
-        TIM1->CNT = 0;
-        GPIO_Write(GPIOB, 2 << 8);
-
-        delay_us(delay);
-
-        continue;
-        */
-
-        // Single row test
-        /*
+        //brightness = 0xff;
+        brightness = (brightness + 1) % 0xff;
         for (i = 0; i < 8; i++) {
-            *red[i] = 0xfff;
-        }
-        GPIO_Write(GPIOB, 1 << 15);
-        while(1){}
-        */
-
-        // Single column test
-        /*
-        for (i = 0; i < 8; i++) {
-            *red[i] = 0;
-        }
-        *red[0] = 0xffff;
-        while(1){
-            for (i = 0; i < 8; i++) {
-                GPIO_Write(GPIOB, 1 << (i + 8));
-                delay_us(1000);
+            for (j = 0; j < 8; j++) {
+                red_frame[i][j] = brightness;
             }
         }
+        delay_us(20000);
         */
-
-        // Diagonal line test
-        for (i = 0; i < 8; i++) {
-            GPIO_Write(GPIOB, 0);
-            if (i == 0) {
-                *red[7] = 0;
-            } else {
-                *red[i - 1] = 0;
-            }
-            *red[i] = 0xffff;
-            // Not sure if we need this
-            TIM1->CNT = 0;
-            TIM2->CNT = 0;
-            TIM3->CNT = 0;
-            GPIO_Write(GPIOB, 1 << (i + 8));
-            delay_us(1000);
-        }
     }
 }
 
@@ -212,6 +237,9 @@ void RCC_Configuration(void)
 
     /* TIM3 clock enable */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+
+    /* TIM7 clock enable */
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM7, ENABLE);
 
     /* GPIOA and GPIOB clock enable */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
@@ -250,6 +278,23 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
     GPIO_Init(GPIOB, &GPIO_InitStructure);
+}
+
+/**
+  * @brief  Configure the nested vectored interrupt controller.
+  * @param  None
+  * @retval None
+  */
+void NVIC_Configuration(void)
+{
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    /* Enable the TIM7 global Interrupt */
+    NVIC_InitStructure.NVIC_IRQChannel = TIM7_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 }
 
 #ifdef  USE_FULL_ASSERT

@@ -43,6 +43,7 @@ SRC += core_cm3.c
 SRC += stm32f10x_gpio.c
 SRC += stm32f10x_tim.c
 SRC += stm32f10x_rcc.c
+SRC += misc.c
 
 # Compiler flags
 CDEFS = -DSTM32F10X_MD_VL
