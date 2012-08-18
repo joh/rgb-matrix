@@ -94,59 +94,105 @@ int main(void)
 
     /* R1 = TIM1_CH1 */
     TIM_OC1Init(TIM1, &TIM_OCInitStructure);
-    TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
 
     /* R2 = TIM1_CH2 */
     TIM_OC2Init(TIM1, &TIM_OCInitStructure);
-    TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Enable);
 
     /* R3 = TIM1_CH3 */
     TIM_OC3Init(TIM1, &TIM_OCInitStructure);
-    TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);
 
     /* R4 = TIM1_CH4 */
     TIM_OC4Init(TIM1, &TIM_OCInitStructure);
-    TIM_OC4PreloadConfig(TIM1, TIM_OCPreload_Enable);
-
-    TIM_ARRPreloadConfig(TIM1, ENABLE);
 
     /* TIM1 enable counter */
-    TIM_Cmd(TIM1, ENABLE);
+    TIM_ARRPreloadConfig(TIM1, ENABLE);
     TIM_CtrlPWMOutputs(TIM1, ENABLE);
+    TIM_Cmd(TIM1, ENABLE);
 
 
     /* R5 = TIM2_CH2 */
     TIM_OC2Init(TIM2, &TIM_OCInitStructure);
-    TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Enable);
 
     /* R6 = TIM2_CH3 */
     TIM_OC3Init(TIM2, &TIM_OCInitStructure);
-    TIM_OC3PreloadConfig(TIM2, TIM_OCPreload_Enable);
 
     /* R7 = TIM2_CH4 */
     TIM_OC4Init(TIM2, &TIM_OCInitStructure);
-    TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Enable);
-
-    TIM_ARRPreloadConfig(TIM2, ENABLE);
 
     /* TIM2 enable counter */
+    TIM_ARRPreloadConfig(TIM2, ENABLE);
     TIM_Cmd(TIM2, ENABLE);
 
 
     /* R8 = TIM3_CH1 */
     TIM_OC1Init(TIM3, &TIM_OCInitStructure);
-    TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
-
-    TIM_ARRPreloadConfig(TIM3, ENABLE);
 
     /* TIM3 enable counter */
+    TIM_ARRPreloadConfig(TIM3, ENABLE);
     TIM_Cmd(TIM3, ENABLE);
 
     uint32_t i;
-
+    uint32_t delay = 1000;
     while (1) {
+        // 2x2 square test
+        /*
+        GPIO_Write(GPIOB, 0);
+        *red[0] = 0x8fff;
+        *red[1] = 0;
+        TIM1->CNT = 0;
+        GPIO_Write(GPIOB, 1 << 8);
+
+        delay_us(delay);
+
+        GPIO_Write(GPIOB, 0);
+        *red[0] = 0;
+        *red[1] = 0x8fff;
+        TIM1->CNT = 0;
+        GPIO_Write(GPIOB, 2 << 8);
+
+        delay_us(delay);
+
+        continue;
+        */
+
+        // Single row test
+        /*
         for (i = 0; i < 8; i++) {
-            pulse(red[i]);
+            *red[i] = 0xfff;
+        }
+        GPIO_Write(GPIOB, 1 << 15);
+        while(1){}
+        */
+
+        // Single column test
+        /*
+        for (i = 0; i < 8; i++) {
+            *red[i] = 0;
+        }
+        *red[0] = 0xffff;
+        while(1){
+            for (i = 0; i < 8; i++) {
+                GPIO_Write(GPIOB, 1 << (i + 8));
+                delay_us(1000);
+            }
+        }
+        */
+
+        // Diagonal line test
+        for (i = 0; i < 8; i++) {
+            GPIO_Write(GPIOB, 0);
+            if (i == 0) {
+                *red[7] = 0;
+            } else {
+                *red[i - 1] = 0;
+            }
+            *red[i] = 0xffff;
+            // Not sure if we need this
+            TIM1->CNT = 0;
+            TIM2->CNT = 0;
+            TIM3->CNT = 0;
+            GPIO_Write(GPIOB, 1 << (i + 8));
+            delay_us(1000);
         }
     }
 }
@@ -192,11 +238,18 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
 
     GPIO_Init(GPIOA, &GPIO_InitStructure);
-    
+
     /* GPIOA Configuration: TIM3 channel 1 and 2 */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
 
     GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    /* GPIOB Configuration (ROWs) */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_All;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
 #ifdef  USE_FULL_ASSERT
