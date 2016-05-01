@@ -38,26 +38,6 @@ static void systick_setup(void)
 }
 
 #if 0
-void pulse(__IO uint16_t *CCR)
-{
-    const uint16_t max = 0xfff;
-    const uint16_t delay = 100;
-
-    int i;
-
-    for (i = 0; i < max; i++) {
-        *CCR = i;
-        delay_us(delay);
-    }
-
-    for (i = max; i >= 0; i--) {
-        *CCR = i;
-        delay_us(delay);
-    }
-}
-#endif
-
-#if 0
 __IO uint16_t red_frame[8][8] = {
     {0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000},
     {0x0000, 0xffff, 0xffff, 0x0000, 0x0000, 0xffff, 0xffff, 0x0000},
@@ -303,39 +283,6 @@ static void gpio_setup(void)
             GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO10 | GPIO11);
 }
 
-static void tim_setup_pwm(uint32_t tim, enum rcc_periph_clken rcc_tim)
-{
-    /* Enable TIM clock */
-    rcc_periph_clock_enable(rcc_tim);
-
-    /* Reset TIM */
-    timer_reset(tim);
-
-    if (tim == TIM1 || tim == TIM8)
-        /* Must be called for advanced timers. Unclear what this does or why
-         * it's necessary but the libopencm3 timer and STM32 docs mention it. */
-        timer_enable_break_main_output(tim);
-
-    /* Timer global mode:
-     * - No divider
-     * - Alignment edge
-     * - Direction up
-     */
-    timer_set_mode(tim, TIM_CR1_CKD_CK_INT, TIM_CR1_CMS_EDGE, TIM_CR1_DIR_UP);
-
-    /* Set prescaler value. */
-    if (tim == TIM1 || tim == TIM8)
-        timer_set_prescaler(tim, 1);   /* 168MHz/2 */
-    else
-        timer_set_prescaler(tim, 0);  /* 84MHz */
-
-    timer_disable_preload(tim);
-    timer_continuous_mode(tim);
-
-    /* 16 bit timer (count up to 2^16 - 1) */
-    timer_set_period(tim, 0xffff);
-}
-
 static void tim_setup(void)
 {
     /* Enable TIM clocks */
@@ -550,49 +497,6 @@ static void tim_setup(void)
 
     timer_set_oc_value(TIM12, TIM_OC1, 0);
     timer_set_oc_value(TIM12, TIM_OC2, 0);
-
-    /* OC preload enable */
-#if 0
-    timer_enable_oc_preload(TIM1, TIM_OC1);
-
-    timer_enable_oc_preload(TIM2, TIM_OC2);
-    timer_enable_oc_preload(TIM2, TIM_OC3);
-    timer_enable_oc_preload(TIM2, TIM_OC4);
-
-    timer_enable_oc_preload(TIM3, TIM_OC1);
-    timer_enable_oc_preload(TIM3, TIM_OC2);
-    timer_enable_oc_preload(TIM3, TIM_OC3);
-    timer_enable_oc_preload(TIM3, TIM_OC4);
-
-    timer_enable_oc_preload(TIM4, TIM_OC1);
-    timer_enable_oc_preload(TIM4, TIM_OC2);
-    timer_enable_oc_preload(TIM4, TIM_OC3);
-    timer_enable_oc_preload(TIM4, TIM_OC4);
-
-    timer_enable_oc_preload(TIM5, TIM_OC1);
-    timer_enable_oc_preload(TIM5, TIM_OC2);
-    timer_enable_oc_preload(TIM5, TIM_OC3);
-    timer_enable_oc_preload(TIM5, TIM_OC4);
-
-    timer_enable_oc_preload(TIM8, TIM_OC1);
-    timer_enable_oc_preload(TIM8, TIM_OC2);
-    timer_enable_oc_preload(TIM8, TIM_OC3);
-    timer_enable_oc_preload(TIM8, TIM_OC4);
-
-    timer_enable_oc_preload(TIM12, TIM_OC1);
-    timer_enable_oc_preload(TIM12, TIM_OC2);
-#endif
-
-    /* ARR preload enable */
-#if 0
-    timer_enable_preload(TIM1);
-    timer_enable_preload(TIM2);
-    timer_enable_preload(TIM3);
-    timer_enable_preload(TIM4);
-    timer_enable_preload(TIM5);
-    timer_enable_preload(TIM8);
-    timer_enable_preload(TIM12);
-#endif
 
     /* Enable interrupt for TIM1 */
     timer_enable_irq(TIM1, TIM_DIER_UIE);
