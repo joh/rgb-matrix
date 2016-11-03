@@ -28,6 +28,8 @@ int main(void)
 
     while (1) {
         __WFI(); /* Wait For Interrupt. */
+        test_columns();
+        test_rows();
         test_swapbuffers();
         test_brightness();
         test_random();

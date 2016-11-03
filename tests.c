@@ -5,6 +5,60 @@
 #include "utils.h"
 #include "tests.h"
 
+void test_columns(void)
+{
+    unsigned int i, k;
+
+    const struct Color colors[] = {
+        {0xffff, 0, 0},
+        {0, 0xffff, 0},
+        {0, 0, 0xffff},
+        /*{0xffff, 0xffff, 0},*/
+        /*{0, 0xffff, 0xffff},*/
+        /*{0xffff, 0, 0xffff},*/
+        /*{0xffff, 0xffff, 0xffff},*/
+    };
+
+    for (k = 0; k < sizeof(colors) / sizeof(*colors); k++) {
+        const struct Color c = colors[k];
+        for (i = 0; i < 8; i++) {
+            DisplayBuf *buf = display_get_backbuffer();
+
+            display_clear(buf, 0, 0, 0);
+            display_set(buf, i, 0, c.r, c.g, c.b);
+            display_swapbuffers();
+            usleep(100000);
+        }
+    }
+}
+
+void test_rows(void)
+{
+    unsigned int i, k;
+
+    const struct Color colors[] = {
+        {0xffff, 0, 0},
+        {0, 0xffff, 0},
+        {0, 0, 0xffff},
+        /*{0xffff, 0xffff, 0},*/
+        /*{0, 0xffff, 0xffff},*/
+        /*{0xffff, 0, 0xffff},*/
+        /*{0xffff, 0xffff, 0xffff},*/
+    };
+
+    for (k = 0; k < sizeof(colors) / sizeof(*colors); k++) {
+        const struct Color c = colors[k];
+        for (i = 0; i < 8; i++) {
+            DisplayBuf *buf = display_get_backbuffer();
+
+            display_clear(buf, 0, 0, 0);
+            display_set(buf, 0, i, c.r, c.g, c.b);
+            display_swapbuffers();
+            usleep(100000);
+        }
+    }
+}
+
 void test_swapbuffers(void)
 {
     unsigned int i, j, k;
