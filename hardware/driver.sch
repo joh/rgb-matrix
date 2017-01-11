@@ -210,57 +210,57 @@ $EndComp
 $Comp
 L ULN2803A U4
 U 1 1 580EA0CD
-P 6000 3850
-F 0 "U4" H 6000 4400 60  0000 C CNN
-F 1 "ULN2803A" H 6000 3300 60  0000 C CNN
-F 2 "Housings_SOIC:SOIC-18W_7.5x11.6mm_Pitch1.27mm" H 6000 4450 60  0001 C CNN
-F 3 "" H 6000 4450 60  0001 C CNN
-	1    6000 3850
+P 8150 3700
+F 0 "U4" H 8150 4250 60  0000 C CNN
+F 1 "ULN2803A" H 8150 3150 60  0000 C CNN
+F 2 "Housings_SOIC:SOIC-18W_7.5x11.6mm_Pitch1.27mm" H 8150 4300 60  0001 C CNN
+F 3 "" H 8150 4300 60  0001 C CNN
+	1    8150 3700
 	1    0    0    -1  
 $EndComp
-Text GLabel 6650 3450 2    60   Output ~ 0
+Text GLabel 8800 3300 2    60   Output ~ 0
 ROW1
-Text GLabel 6650 3550 2    60   Output ~ 0
+Text GLabel 8800 3400 2    60   Output ~ 0
 ROW2
-Text GLabel 6650 3650 2    60   Output ~ 0
+Text GLabel 8800 3500 2    60   Output ~ 0
 ROW3
-Text GLabel 6650 3750 2    60   Output ~ 0
+Text GLabel 8800 3600 2    60   Output ~ 0
 ROW4
-Text GLabel 6650 3850 2    60   Output ~ 0
+Text GLabel 8800 3700 2    60   Output ~ 0
 ROW5
-Text GLabel 6650 3950 2    60   Output ~ 0
+Text GLabel 8800 3800 2    60   Output ~ 0
 ROW6
-Text GLabel 6650 4050 2    60   Output ~ 0
+Text GLabel 8800 3900 2    60   Output ~ 0
 ROW7
-Text GLabel 6650 4150 2    60   Output ~ 0
+Text GLabel 8800 4000 2    60   Output ~ 0
 ROW8
-NoConn ~ 6500 4250
+NoConn ~ 8650 4100
 $Comp
 L GND #PWR04
 U 1 1 580EA8A7
-P 5450 4300
-F 0 "#PWR04" H 5450 4050 50  0001 C CNN
-F 1 "GND" H 5450 4150 50  0000 C CNN
-F 2 "" H 5450 4300 50  0000 C CNN
-F 3 "" H 5450 4300 50  0000 C CNN
-	1    5450 4300
+P 6450 4400
+F 0 "#PWR04" H 6450 4150 50  0001 C CNN
+F 1 "GND" H 6450 4250 50  0000 C CNN
+F 2 "" H 6450 4400 50  0000 C CNN
+F 3 "" H 6450 4400 50  0000 C CNN
+	1    6450 4400
 	1    0    0    -1  
 $EndComp
-Text GLabel 5400 3450 0    60   Input ~ 0
+Text GLabel 7550 3300 0    60   Input ~ 0
 ON_ROW1
-Text GLabel 5400 3550 0    60   Input ~ 0
+Text GLabel 7550 3400 0    60   Input ~ 0
 ON_ROW2
-Text GLabel 5400 3650 0    60   Input ~ 0
+Text GLabel 7550 3500 0    60   Input ~ 0
 ON_ROW3
-Text GLabel 5400 3750 0    60   Input ~ 0
+Text GLabel 7550 3600 0    60   Input ~ 0
 ON_ROW4
-Text GLabel 5400 3850 0    60   Input ~ 0
+Text GLabel 7550 3700 0    60   Input ~ 0
 ON_ROW5
-Text GLabel 5400 3950 0    60   Input ~ 0
+Text GLabel 7550 3800 0    60   Input ~ 0
 ON_ROW6
-Text GLabel 5400 4050 0    60   Input ~ 0
+Text GLabel 7550 3900 0    60   Input ~ 0
 ON_ROW7
-Text GLabel 5400 4150 0    60   Input ~ 0
+Text GLabel 7550 4000 0    60   Input ~ 0
 ON_ROW8
 Text GLabel 1050 2600 0    60   Input ~ 0
 OE
@@ -323,6 +323,41 @@ F 3 "" H 1150 2100 50  0000 C CNN
 	1    1150 2100
 	1    0    0    -1  
 $EndComp
+$Comp
+L C C17
+U 1 1 584F6D63
+P 3600 4550
+F 0 "C17" H 3625 4650 50  0000 L CNN
+F 1 "100n" H 3625 4450 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805" H 3638 4400 50  0001 C CNN
+F 3 "" H 3600 4550 50  0000 C CNN
+	1    3600 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C16
+U 1 1 584F7B9B
+P 3600 2750
+F 0 "C16" H 3625 2850 50  0000 L CNN
+F 1 "100n" H 3625 2650 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805" H 3638 2600 50  0001 C CNN
+F 3 "" H 3600 2750 50  0000 C CNN
+	1    3600 2750
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C18
+U 1 1 584F7F50
+P 3600 6350
+F 0 "C18" H 3625 6450 50  0000 L CNN
+F 1 "100n" H 3625 6250 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805" H 3638 6200 50  0001 C CNN
+F 3 "" H 3600 6350 50  0000 C CNN
+	1    3600 6350
+	1    0    0    -1  
+$EndComp
+Text Notes 7300 4550 0    60   ~ 0
+Common-cathode alternative: TBD62083
 Wire Wire Line
 	3400 2700 3450 2700
 Wire Wire Line
@@ -444,41 +479,39 @@ Wire Wire Line
 Wire Wire Line
 	2100 5950 2200 5950
 Wire Wire Line
-	6650 4150 6500 4150
+	8800 4000 8650 4000
 Wire Wire Line
-	6650 3450 6500 3450
+	8800 3300 8650 3300
 Wire Wire Line
-	6650 3550 6500 3550
+	8800 3400 8650 3400
 Wire Wire Line
-	6650 3650 6500 3650
+	8800 3500 8650 3500
 Wire Wire Line
-	6650 3750 6500 3750
+	8800 3600 8650 3600
 Wire Wire Line
-	6650 3850 6500 3850
+	8800 3700 8650 3700
 Wire Wire Line
-	6650 3950 6500 3950
+	8800 3800 8650 3800
 Wire Wire Line
-	6650 4050 6500 4050
+	8800 3900 8650 3900
 Wire Wire Line
-	5500 4250 5450 4250
+	6450 4100 7650 4100
 Wire Wire Line
-	5450 4250 5450 4300
+	7550 3300 7650 3300
 Wire Wire Line
-	5400 3450 5500 3450
+	7550 3400 7650 3400
 Wire Wire Line
-	5400 3550 5500 3550
+	7550 3500 7650 3500
 Wire Wire Line
-	5400 3650 5500 3650
+	7550 3600 7650 3600
 Wire Wire Line
-	5400 3750 5500 3750
+	7550 3700 7650 3700
 Wire Wire Line
-	5400 3850 5500 3850
+	7550 3800 7650 3800
 Wire Wire Line
-	5400 3950 5500 3950
+	7550 3900 7650 3900
 Wire Wire Line
-	5400 4050 5500 4050
-Wire Wire Line
-	5400 4150 5500 4150
+	7550 4000 7650 4000
 Wire Wire Line
 	1150 2100 1150 2150
 Wire Wire Line
@@ -499,49 +532,58 @@ Wire Wire Line
 Connection ~ 1150 2600
 Wire Wire Line
 	3400 2600 3800 2600
-$Comp
-L C C17
-U 1 1 584F6D63
-P 3600 4550
-F 0 "C17" H 3625 4650 50  0000 L CNN
-F 1 "100n" H 3625 4450 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0805" H 3638 4400 50  0001 C CNN
-F 3 "" H 3600 4550 50  0000 C CNN
-	1    3600 4550
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	3600 4700 3450 4700
 Connection ~ 3450 4700
 Connection ~ 3600 4400
-$Comp
-L C C16
-U 1 1 584F7B9B
-P 3600 2750
-F 0 "C16" H 3625 2850 50  0000 L CNN
-F 1 "100n" H 3625 2650 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0805" H 3638 2600 50  0001 C CNN
-F 3 "" H 3600 2750 50  0000 C CNN
-	1    3600 2750
-	1    0    0    -1  
-$EndComp
 Connection ~ 3600 2600
 Wire Wire Line
 	3450 2900 3600 2900
 Connection ~ 3450 2900
-$Comp
-L C C18
-U 1 1 584F7F50
-P 3600 6350
-F 0 "C18" H 3625 6450 50  0000 L CNN
-F 1 "100n" H 3625 6250 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0805" H 3638 6200 50  0001 C CNN
-F 3 "" H 3600 6350 50  0000 C CNN
-	1    3600 6350
-	1    0    0    -1  
-$EndComp
 Connection ~ 3600 6200
 Wire Wire Line
 	3450 6500 3600 6500
 Connection ~ 3450 6500
+$Comp
+L +5V #PWR09
+U 1 1 5874F556
+P 6450 3800
+F 0 "#PWR09" H 6450 3650 50  0001 C CNN
+F 1 "+5V" H 6450 3940 50  0000 C CNN
+F 2 "" H 6450 3800 50  0000 C CNN
+F 3 "" H 6450 3800 50  0000 C CNN
+	1    6450 3800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6450 4350 6450 4400
+Wire Wire Line
+	6450 3800 6450 3850
+Text Notes 4800 4400 0    60   ~ 0
+For common-anode displays,\nsolder JP1 and\nreplace U4 with TBD62783.\n\nFor common-cathode displays,\nsolder JP2.
+$Comp
+L Jumper_NC_Small JP2
+U 1 1 5875096F
+P 6450 4250
+F 0 "JP2" H 6450 4330 50  0000 C CNN
+F 1 "Jumper_NC_Small" H 6460 4190 50  0001 C CNN
+F 2 "" H 6450 4250 50  0000 C CNN
+F 3 "" H 6450 4250 50  0000 C CNN
+	1    6450 4250
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6450 4050 6450 4150
+$Comp
+L Jumper_NC_Small JP1
+U 1 1 58750A6A
+P 6450 3950
+F 0 "JP1" H 6450 4030 50  0000 C CNN
+F 1 "Jumper_NC_Small" H 6460 3890 50  0001 C CNN
+F 2 "" H 6450 3950 50  0000 C CNN
+F 3 "" H 6450 3950 50  0000 C CNN
+	1    6450 3950
+	0    -1   -1   0   
+$EndComp
+Connection ~ 6450 4100
 $EndSCHEMATC
