@@ -1,4 +1,5 @@
 EESchema Schematic File Version 2
+LIBS:rgb-matrix-rescue
 LIBS:power
 LIBS:device
 LIBS:transistors
@@ -335,17 +336,6 @@ F 3 "" H 3600 4550 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L C C16
-U 1 1 584F7B9B
-P 3600 2750
-F 0 "C16" H 3625 2850 50  0000 L CNN
-F 1 "100n" H 3625 2650 50  0000 L CNN
-F 2 "Capacitors_SMD:C_0805" H 3638 2600 50  0001 C CNN
-F 3 "" H 3600 2750 50  0000 C CNN
-	1    3600 2750
-	1    0    0    -1  
-$EndComp
-$Comp
 L C C18
 U 1 1 584F7F50
 P 3600 6350
@@ -358,6 +348,52 @@ F 3 "" H 3600 6350 50  0000 C CNN
 $EndComp
 Text Notes 7300 4550 0    60   ~ 0
 Common-cathode alternative: TBD62083
+$Comp
+L +5V #PWR09
+U 1 1 5874F556
+P 6450 3800
+F 0 "#PWR09" H 6450 3650 50  0001 C CNN
+F 1 "+5V" H 6450 3940 50  0000 C CNN
+F 2 "" H 6450 3800 50  0000 C CNN
+F 3 "" H 6450 3800 50  0000 C CNN
+	1    6450 3800
+	1    0    0    -1  
+$EndComp
+Text Notes 4800 4400 0    60   ~ 0
+For common-anode displays,\nsolder JP1 and\nreplace U4 with TBD62783.\n\nFor common-cathode displays,\nsolder JP2.
+$Comp
+L C C16
+U 1 1 584F7B9B
+P 3600 2750
+F 0 "C16" H 3625 2850 50  0000 L CNN
+F 1 "100n" H 3625 2650 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805" H 3638 2600 50  0001 C CNN
+F 3 "" H 3600 2750 50  0000 C CNN
+	1    3600 2750
+	1    0    0    -1  
+$EndComp
+$Comp
+L C C21
+U 1 1 58783112
+P 6700 4250
+F 0 "C21" H 6725 4350 50  0000 L CNN
+F 1 "100n" H 6725 4150 50  0000 L CNN
+F 2 "Capacitors_SMD:C_0805" H 6738 4100 50  0001 C CNN
+F 3 "" H 6700 4250 50  0000 C CNN
+	1    6700 4250
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR010
+U 1 1 587832B7
+P 6700 4400
+F 0 "#PWR010" H 6700 4150 50  0001 C CNN
+F 1 "GND" H 6700 4250 50  0000 C CNN
+F 2 "" H 6700 4400 50  0000 C CNN
+F 3 "" H 6700 4400 50  0000 C CNN
+	1    6700 4400
+	1    0    0    -1  
+$EndComp
 Wire Wire Line
 	3400 2700 3450 2700
 Wire Wire Line
@@ -495,8 +531,6 @@ Wire Wire Line
 Wire Wire Line
 	8800 3900 8650 3900
 Wire Wire Line
-	6450 4100 7650 4100
-Wire Wire Line
 	7550 3300 7650 3300
 Wire Wire Line
 	7550 3400 7650 3400
@@ -544,46 +578,38 @@ Connection ~ 3600 6200
 Wire Wire Line
 	3450 6500 3600 6500
 Connection ~ 3450 6500
-$Comp
-L +5V #PWR09
-U 1 1 5874F556
-P 6450 3800
-F 0 "#PWR09" H 6450 3650 50  0001 C CNN
-F 1 "+5V" H 6450 3940 50  0000 C CNN
-F 2 "" H 6450 3800 50  0000 C CNN
-F 3 "" H 6450 3800 50  0000 C CNN
-	1    6450 3800
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	6450 4350 6450 4400
 Wire Wire Line
 	6450 3800 6450 3850
-Text Notes 4800 4400 0    60   ~ 0
-For common-anode displays,\nsolder JP1 and\nreplace U4 with TBD62783.\n\nFor common-cathode displays,\nsolder JP2.
-$Comp
-L Jumper_NC_Small JP2
-U 1 1 5875096F
-P 6450 4250
-F 0 "JP2" H 6450 4330 50  0000 C CNN
-F 1 "Jumper_NC_Small" H 6460 4190 50  0001 C CNN
-F 2 "KiCad-Footprints:MADW__SMD-solder-bridge" H 6450 4250 50  0001 C CNN
-F 3 "" H 6450 4250 50  0000 C CNN
-	1    6450 4250
-	0    -1   -1   0   
-$EndComp
+Wire Wire Line
+	6700 4100 6700 4100
+Connection ~ 6700 4100
+Connection ~ 6450 4100
 Wire Wire Line
 	6450 4050 6450 4150
+Wire Wire Line
+	6450 4100 7650 4100
 $Comp
 L Jumper_NC_Small JP1
 U 1 1 58750A6A
 P 6450 3950
 F 0 "JP1" H 6450 4030 50  0000 C CNN
-F 1 "Jumper_NC_Small" H 6460 3890 50  0001 C CNN
+F 1 "CA" H 6460 3890 50  0001 C CNN
 F 2 "KiCad-Footprints:MADW__SMD-solder-bridge" H 6450 3950 50  0001 C CNN
 F 3 "" H 6450 3950 50  0000 C CNN
 	1    6450 3950
 	0    -1   -1   0   
 $EndComp
-Connection ~ 6450 4100
+$Comp
+L Jumper_NC_Small JP2
+U 1 1 5875096F
+P 6450 4250
+F 0 "JP2" H 6450 4330 50  0000 C CNN
+F 1 "CC" H 6460 4190 50  0001 C CNN
+F 2 "KiCad-Footprints:MADW__SMD-solder-bridge" H 6450 4250 50  0001 C CNN
+F 3 "" H 6450 4250 50  0000 C CNN
+	1    6450 4250
+	0    -1   -1   0   
+$EndComp
 $EndSCHEMATC
