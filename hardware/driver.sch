@@ -595,8 +595,8 @@ L Jumper_NC_Small JP1
 U 1 1 58750A6A
 P 6450 3950
 F 0 "JP1" H 6450 4030 50  0000 C CNN
-F 1 "CA" H 6460 3890 50  0001 C CNN
-F 2 "KiCad-Footprints:MADW__SMD-solder-bridge" H 6450 3950 50  0001 C CNN
+F 1 "CA" H 6460 3890 50  0000 C CNN
+F 2 "rgb-matrix:SMD-solder-bridge-1mm" H 6450 3950 50  0001 C CNN
 F 3 "" H 6450 3950 50  0000 C CNN
 	1    6450 3950
 	0    -1   -1   0   
@@ -606,8 +606,8 @@ L Jumper_NC_Small JP2
 U 1 1 5875096F
 P 6450 4250
 F 0 "JP2" H 6450 4330 50  0000 C CNN
-F 1 "CC" H 6460 4190 50  0001 C CNN
-F 2 "KiCad-Footprints:MADW__SMD-solder-bridge" H 6450 4250 50  0001 C CNN
+F 1 "CC" H 6460 4190 50  0000 C CNN
+F 2 "rgb-matrix:SMD-solder-bridge-1mm" H 6450 4250 50  0001 C CNN
 F 3 "" H 6450 4250 50  0000 C CNN
 	1    6450 4250
 	0    -1   -1   0   
