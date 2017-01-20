@@ -62,7 +62,7 @@ U 1 1 581A55CB
 P 3600 3800
 F 0 "P8" H 3600 4200 50  0000 C CNN
 F 1 "PWEST" V 3700 3800 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Angled_1x06" H 3600 3800 50  0001 C CNN
+F 2 "rgb-matrix:Socket_Strip_Angled_1x06" H 3600 3800 50  0001 C CNN
 F 3 "" H 3600 3800 50  0000 C CNN
 	1    3600 3800
 	-1   0    0    1   
@@ -102,7 +102,7 @@ U 1 1 581F606F
 P 7350 3800
 F 0 "P11" H 7350 4200 50  0000 C CNN
 F 1 "PEAST" V 7450 3800 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Angled_1x06" H 7350 3800 50  0001 C CNN
+F 2 "rgb-matrix:Pin_Header_Angled_1x06" H 7350 3800 50  0001 C CNN
 F 3 "" H 7350 3800 50  0000 C CNN
 	1    7350 3800
 	1    0    0    1   
@@ -130,7 +130,7 @@ U 1 1 581F64E2
 P 5400 1950
 F 0 "P9" H 5400 2350 50  0000 C CNN
 F 1 "PNORTH" V 5500 1950 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Angled_1x06" H 5400 1950 50  0001 C CNN
+F 2 "rgb-matrix:Pin_Header_Angled_1x06" H 5400 1950 50  0001 C CNN
 F 3 "" H 5400 1950 50  0000 C CNN
 	1    5400 1950
 	0    -1   -1   0   
@@ -158,7 +158,7 @@ U 1 1 581F661C
 P 5400 5800
 F 0 "P10" H 5400 6200 50  0000 C CNN
 F 1 "PSOUTH" V 5500 5800 50  0000 C CNN
-F 2 "Socket_Strips:Socket_Strip_Angled_1x06" H 5400 5800 50  0001 C CNN
+F 2 "rgb-matrix:Socket_Strip_Angled_1x06" H 5400 5800 50  0001 C CNN
 F 3 "" H 5400 5800 50  0000 C CNN
 	1    5400 5800
 	0    -1   1    0   
