@@ -197,7 +197,7 @@ U 1 1 582B6E3F
 P 1750 1650
 F 0 "P6" H 1750 1800 50  0000 C CNN
 F 1 "VEXT" V 1850 1650 50  0000 C CNN
-F 2 "rgb-matrix:Pin_Header_Angled_1x02" H 1750 1650 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x02_Pitch2.54mm" H 1750 1650 50  0001 C CNN
 F 3 "" H 1750 1650 50  0000 C CNN
 	1    1750 1650
 	-1   0    0    -1  
@@ -428,9 +428,6 @@ Wire Wire Line
 	6200 2550 6150 2550
 Wire Wire Line
 	2300 1700 2300 1750
-Connection ~ 2400 2250
-Wire Wire Line
-	2400 1600 2400 2250
 Wire Wire Line
 	1950 1600 2400 1600
 Wire Wire Line
@@ -533,4 +530,7 @@ F 3 "" H 5750 2550 50  0000 C CNN
 	1    5750 2550
 	0    -1   -1   0   
 $EndComp
+Connection ~ 2400 2250
+Wire Wire Line
+	2400 1600 2400 2250
 $EndSCHEMATC
