@@ -1,6 +1,7 @@
 /*
  * RGB LED with PWM on STM32!
  */
+#include <stdio.h>
 #include <string.h>
 
 #include <libopencm3/stm32/rcc.h>
@@ -12,8 +13,15 @@
 #include <libopencmsis/core_cm3.h>
 
 #include "display.h"
-#include "tests.h"
 #include "utils.h"
+#include "usb.h"
+#include "tests.h"
+
+//#define DEBUG
+
+#ifdef DEBUG
+extern void initialise_monitor_handles(void);
+#endif
 
 static void clock_init(void)
 {
@@ -25,6 +33,16 @@ int main(void)
     clock_init();
     display_init();
     systick_init();
+    /*usb_init();*/
+
+#ifdef DEBUG
+    setbuf(stdout, NULL);
+    initialise_monitor_handles();
+#endif
+
+    /*while (1) {*/
+        /*usb_poll();*/
+    /*}*/
 
     while (1) {
         __WFI(); /* Wait For Interrupt. */

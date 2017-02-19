@@ -19,11 +19,13 @@
 
 BINARY = main
 
-OBJS = display.o utils.o tests.o
+OBJS = display.o utils.o usb.o tests.o
 
 OPENCM3_DIR=../libopencm3-examples/libopencm3
 LDSCRIPT = stm32f4-discovery.ld
-#LDLIBS += -lm
+#LDLIBS += -lnosys
+#LDLIBS += -lrdimon
+#LDFLAGS += --specs=rdimon.specs
 
 include libopencm3.target.mk
 
