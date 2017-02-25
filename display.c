@@ -176,6 +176,9 @@ static void display_init_gpio(void)
     // debug
     /*gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,*/
             /*GPIO0 | GPIO1 | GPIO2);*/
+
+    // PA4: OE
+    gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO4);
 }
 
 static void display_init_tim(void)
@@ -448,11 +451,17 @@ static void display_init_tim(void)
     timer_enable_counter(TIM14);
 }
 
+static void display_enable()
+{
+    // Pull OE low to enable column drivers
+    gpio_clear(GPIOA, GPIO4);
+}
 
 void display_init()
 {
     display_init_gpio();
     display_init_tim();
+    display_enable();
 }
 
 DisplayBuf *display_get_backbuffer(void)
