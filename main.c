@@ -50,6 +50,7 @@ int main(void)
         test_rows();
         test_swapbuffers();
         test_brightness();
+        test_white();
         test_random();
         test_fade();
         test_patterns();

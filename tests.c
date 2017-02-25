@@ -123,6 +123,27 @@ void test_brightness(void)
     }
 }
 
+void test_white(void)
+{
+    unsigned int i, j;
+    uint16_t brightness = 0xffff/2;
+
+    DisplayBuf *buf = display_get_backbuffer();
+
+    display_clear(buf, 0, 0, 0);
+
+    for (i = 0; i < 8; i++) {
+        for (j = 0; j < 8; j++) {
+            (*buf)[i][j].r = brightness;
+            (*buf)[i][j].g = brightness;
+            (*buf)[i][j].b = brightness;
+        }
+    }
+
+    display_swapbuffers();
+    usleep(1000000);
+}
+
 void test_random(void)
 {
     unsigned int i, j, k;
