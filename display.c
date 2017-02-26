@@ -30,36 +30,36 @@ static struct gpio row_gpios[] = {
  * Columns
  */
 static __IO uint32_t *red[8] = {
-    &TIM5_CCR3,  // R1, PA2
-    &TIM5_CCR4,  // R2, PA3
-    &TIM13_CCR1, // R3, PA6
-    &TIM14_CCR1, // R4, PA7
-    &TIM3_CCR3,  // R5, PB0
-    &TIM3_CCR4,  // R6, PB1
-    &TIM2_CCR3,  // R7, PB10
-    &TIM2_CCR4,  // R8, PB11
+    &TIM5_CCR3,  // R1, PA2,  TIM5_CH3
+    &TIM5_CCR4,  // R2, PA3,  TIM5_CH4
+    &TIM13_CCR1, // R3, PA6,  TIM13_CH1
+    &TIM14_CCR1, // R4, PA7,  TIM14_CH1
+    &TIM3_CCR3,  // R5, PB0,  TIM3_CH3
+    &TIM3_CCR4,  // R6, PB1,  TIM3_CH4
+    &TIM2_CCR3,  // R7, PB10, TIM2_CH3
+    &TIM2_CCR4,  // R8, PB11, TIM2_CH4
 };
 
 static __IO uint32_t *green[8] = {
-    &TIM12_CCR1, // G1, PB14
-    &TIM12_CCR2, // G2, PB15
-    &TIM8_CCR1,  // G3, PC6
-    &TIM8_CCR2,  // G4, PC7
-    &TIM8_CCR3,  // G5, PC8
-    &TIM8_CCR4,  // G6, PC9
-    &TIM1_CCR1,  // G7, PA8
-    &TIM1_CCR3,  // G8, PA10
+    &TIM12_CCR1, // G1, PB14, TIM12_CH1
+    &TIM12_CCR2, // G2, PB15, TIM12_CH2
+    &TIM8_CCR1,  // G3, PC6,  TIM8_CH1
+    &TIM8_CCR2,  // G4, PC7,  TIM8_CH2
+    &TIM8_CCR3,  // G5, PC8,  TIM8_CH3
+    &TIM8_CCR4,  // G6, PC9,  TIM8_CH4
+    &TIM1_CCR1,  // G7, PA8,  TIM1_CH1
+    &TIM1_CCR3,  // G8, PA10, TIM1_CH3
 };
 
 static __IO uint32_t *blue[8] = {
-    &TIM3_CCR1, // B1, PB4
-    &TIM3_CCR2, // B2, PB5
-    &TIM4_CCR1, // B3, PB6
-    &TIM4_CCR2, // B4, PB7
-    &TIM4_CCR3, // B5, PB8
-    &TIM4_CCR4, // B6, PB9
-    &TIM5_CCR1, // B7, PA0
-    &TIM5_CCR2, // B8, PA1
+    &TIM3_CCR1, // B1, PB4, TIM3_CH1
+    &TIM3_CCR2, // B2, PB5, TIM3_CH2
+    &TIM4_CCR1, // B3, PB6, TIM4_CH1
+    &TIM4_CCR2, // B4, PB7, TIM4_CH2
+    &TIM4_CCR3, // B5, PB8, TIM4_CH3
+    &TIM4_CCR4, // B6, PB9, TIM4_CH4
+    &TIM5_CCR1, // B7, PA0, TIM5_CH1
+    &TIM5_CCR2, // B8, PA1, TIM5_CH2
 };
 
 
@@ -86,7 +86,7 @@ void tim1_up_tim10_isr(void)
         current_row = (current_row + 1) % 8;
 
         if (current_row == 0) {
-            gpio_set(GPIOD, GPIO1);
+            /*gpio_set(GPIOD, GPIO1);*/
             fb_spin = 1;
         }
 
@@ -97,18 +97,28 @@ void tim1_up_tim10_isr(void)
         }
 
         if (current_row == 7) {
-            gpio_clear(GPIOD, GPIO1);
+            /*gpio_clear(GPIOD, GPIO1);*/
             fb_spin = 0;
         }
 
         gpio_set(row_gpios[current_row].port, row_gpios[current_row].pin);
 
-        /* Enable TIM1 will start all other slaves */
-        timer_enable_counter(TIM1);
+        /* Generate update events to update the CCRs and reset the timers */
+        timer_generate_event(TIM1, TIM_EGR_UG);
+        /* TIM13 and TIM14 can't be synchronized, so they must be dealt with
+         * separately */
+        timer_generate_event(TIM13, TIM_EGR_UG);
+        timer_generate_event(TIM14, TIM_EGR_UG);
 
-        /* ... except TIM13 and TIM14 which aren't synchronized */
-        timer_enable_counter(TIM13);
-        timer_enable_counter(TIM14);
+        /*gpio_clear(GPIOC, GPIO10); // debug*/
+
+        /* Preload CCRs with zero to prevent any output during the next timer
+         * cycle, which begins at the same time as this interrupt handler! */
+        for (i = 0; i < 8; i++) {
+            *red[i] = 0;
+            *green[i] = 0;
+            *blue[i] = 0;
+        }
     }
 }
 
@@ -171,11 +181,14 @@ static void display_init_gpio(void)
      */
     for (int i = 0; i < 8; i++) {
         gpio_mode_setup(row_gpios[i].port, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, row_gpios[i].pin);
+        gpio_set_output_options(row_gpios[i].port, GPIO_OTYPE_PP, GPIO_OSPEED_100MHZ, row_gpios[i].pin);
     }
 
     // debug
-    /*gpio_mode_setup(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,*/
-            /*GPIO0 | GPIO1 | GPIO2);*/
+    /*gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,*/
+            /*GPIO10 | GPIO11 | GPIO12);*/
+    /*gpio_set_output_options(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_100MHZ,*/
+            /*GPIO10 | GPIO11 | GPIO12);*/
 
     // PA4: OE
     gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO4);
@@ -238,7 +251,7 @@ static void display_init_tim(void)
     timer_set_prescaler(TIM13, ps);
     timer_set_prescaler(TIM14, ps);
 
-    /* Disable preload. */
+    /* Disable ARR preload. */
     timer_disable_preload(TIM1);
     timer_disable_preload(TIM2);
     timer_disable_preload(TIM3);
@@ -250,15 +263,15 @@ static void display_init_tim(void)
     timer_disable_preload(TIM14);
 
     /* Continous mode. */
-    timer_one_shot_mode(TIM1);
-    timer_one_shot_mode(TIM2);
-    timer_one_shot_mode(TIM3);
-    timer_one_shot_mode(TIM4);
-    timer_one_shot_mode(TIM5);
-    timer_one_shot_mode(TIM8);
-    timer_one_shot_mode(TIM12);
-    timer_one_shot_mode(TIM13);
-    timer_one_shot_mode(TIM14);
+    timer_continuous_mode(TIM1);
+    timer_continuous_mode(TIM2);
+    timer_continuous_mode(TIM3);
+    timer_continuous_mode(TIM4);
+    timer_continuous_mode(TIM5);
+    timer_continuous_mode(TIM8);
+    timer_continuous_mode(TIM12);
+    timer_continuous_mode(TIM13);
+    timer_continuous_mode(TIM14);
 
     /* 16 bit timer (count up to 2^16 - 1) */
     timer_set_period(TIM1, 0xffff);
@@ -309,7 +322,6 @@ static void display_init_tim(void)
     timer_set_oc_mode(TIM1, TIM_OC1, TIM_OCM_PWM1);
     timer_set_oc_mode(TIM1, TIM_OC3, TIM_OCM_PWM1);
 
-    /*timer_set_oc_mode(TIM2, TIM_OC2, TIM_OCM_PWM1);*/
     timer_set_oc_mode(TIM2, TIM_OC3, TIM_OCM_PWM1);
     timer_set_oc_mode(TIM2, TIM_OC4, TIM_OCM_PWM1);
 
@@ -344,7 +356,6 @@ static void display_init_tim(void)
     timer_set_oc_polarity_high(TIM1, TIM_OC1);
     timer_set_oc_polarity_high(TIM1, TIM_OC3);
 
-    /*timer_set_oc_polarity_high(TIM2, TIM_OC2);*/
     timer_set_oc_polarity_high(TIM2, TIM_OC3);
     timer_set_oc_polarity_high(TIM2, TIM_OC4);
 
@@ -375,11 +386,45 @@ static void display_init_tim(void)
 
     timer_set_oc_polarity_high(TIM14, TIM_OC1);
 
+    /* Enable OC preload */
+    timer_enable_oc_preload(TIM1, TIM_OC1);
+    timer_enable_oc_preload(TIM1, TIM_OC3);
+
+    timer_enable_oc_preload(TIM2, TIM_OC3);
+    timer_enable_oc_preload(TIM2, TIM_OC4);
+
+    timer_enable_oc_preload(TIM3, TIM_OC1);
+    timer_enable_oc_preload(TIM3, TIM_OC2);
+    timer_enable_oc_preload(TIM3, TIM_OC3);
+    timer_enable_oc_preload(TIM3, TIM_OC4);
+
+    timer_enable_oc_preload(TIM4, TIM_OC1);
+    timer_enable_oc_preload(TIM4, TIM_OC2);
+    timer_enable_oc_preload(TIM4, TIM_OC3);
+    timer_enable_oc_preload(TIM4, TIM_OC4);
+
+    timer_enable_oc_preload(TIM5, TIM_OC1);
+    timer_enable_oc_preload(TIM5, TIM_OC2);
+    timer_enable_oc_preload(TIM5, TIM_OC3);
+    timer_enable_oc_preload(TIM5, TIM_OC4);
+
+    timer_enable_oc_preload(TIM8, TIM_OC1);
+    timer_enable_oc_preload(TIM8, TIM_OC2);
+    timer_enable_oc_preload(TIM8, TIM_OC3);
+    timer_enable_oc_preload(TIM8, TIM_OC4);
+
+    timer_enable_oc_preload(TIM12, TIM_OC1);
+    timer_enable_oc_preload(TIM12, TIM_OC2);
+
+    timer_enable_oc_preload(TIM13, TIM_OC1);
+
+    timer_enable_oc_preload(TIM14, TIM_OC1);
+
+
     /* OC Value */
     timer_set_oc_value(TIM1, TIM_OC1, 0);
     timer_set_oc_value(TIM1, TIM_OC3, 0);
 
-    /*timer_set_oc_value(TIM2, TIM_OC2, 0);*/
     timer_set_oc_value(TIM2, TIM_OC3, 0);
     timer_set_oc_value(TIM2, TIM_OC4, 0);
 
@@ -410,43 +455,51 @@ static void display_init_tim(void)
 
     timer_set_oc_value(TIM14, TIM_OC1, 0);
 
+
     /* Enable interrupt for TIM1 */
     timer_enable_irq(TIM1, TIM_DIER_UIE);
     nvic_enable_irq(NVIC_TIM1_UP_TIM10_IRQ);
 
+    /* Only generate interrupt on overflow (not on UG) */
+    timer_update_on_overflow(TIM1);
+
     /* TIM1 is master */
-    timer_set_master_mode(TIM1, TIM_CR2_MMS_ENABLE);
+    timer_set_master_mode(TIM1, TIM_CR2_MMS_RESET);
 
     /* TIM2 is slave of TIM1 */
-    timer_slave_set_mode(TIM2, TIM_SMCR_SMS_TM);
+    timer_slave_set_mode(TIM2, TIM_SMCR_SMS_RM);
     timer_slave_set_trigger(TIM2, TIM_SMCR_TS_ITR0);
-    timer_set_master_mode(TIM2, TIM_CR2_MMS_ENABLE);
+    timer_set_master_mode(TIM2, TIM_CR2_MMS_RESET);
 
     /* TIM3 is slave of TIM1 */
-    timer_slave_set_mode(TIM3, TIM_SMCR_SMS_TM);
+    timer_slave_set_mode(TIM3, TIM_SMCR_SMS_RM);
     timer_slave_set_trigger(TIM3, TIM_SMCR_TS_ITR0);
 
     /* TIM4 is slave of TIM1 */
-    timer_slave_set_mode(TIM4, TIM_SMCR_SMS_TM);
+    timer_slave_set_mode(TIM4, TIM_SMCR_SMS_RM);
     timer_slave_set_trigger(TIM4, TIM_SMCR_TS_ITR0);
-    timer_set_master_mode(TIM4, TIM_CR2_MMS_ENABLE);
+    timer_set_master_mode(TIM4, TIM_CR2_MMS_RESET);
 
     /* TIM5 is slave of TIM2 */
-    timer_slave_set_mode(TIM5, TIM_SMCR_SMS_TM);
+    timer_slave_set_mode(TIM5, TIM_SMCR_SMS_RM);
     timer_slave_set_trigger(TIM5, TIM_SMCR_TS_ITR0);
 
     /* TIM8 is slave of TIM1 */
-    timer_slave_set_mode(TIM8, TIM_SMCR_SMS_TM);
+    timer_slave_set_mode(TIM8, TIM_SMCR_SMS_RM);
     timer_slave_set_trigger(TIM8, TIM_SMCR_TS_ITR0);
 
     /* TIM12 is slave of TIM4 */
-    timer_slave_set_mode(TIM12, TIM_SMCR_SMS_TM);
+    timer_slave_set_mode(TIM12, TIM_SMCR_SMS_RM);
     timer_slave_set_trigger(TIM12, TIM_SMCR_TS_ITR0);
 
-    /* Enable TIM1 will start all other slaves */
+    /* Start all the timers */
     timer_enable_counter(TIM1);
-
-    /* ... except TIM13 and TIM14 which aren't synchronized */
+    timer_enable_counter(TIM2);
+    timer_enable_counter(TIM3);
+    timer_enable_counter(TIM4);
+    timer_enable_counter(TIM5);
+    timer_enable_counter(TIM8);
+    timer_enable_counter(TIM12);
     timer_enable_counter(TIM13);
     timer_enable_counter(TIM14);
 }
@@ -474,10 +527,10 @@ void display_swapbuffers(void)
 {
     while (fb_spin == 1)
         ;
-    gpio_set(GPIOD, GPIO0);
+    /*gpio_set(GPIOD, GPIO0);*/
     front_buffer = (front_buffer + 1) % 2;
     fb_spin = 1;
-    gpio_clear(GPIOD, GPIO0);
+    /*gpio_clear(GPIOD, GPIO0);*/
 }
 
 void display_clear(DisplayBuf *buf, uint16_t r, uint16_t g, uint16_t b)
