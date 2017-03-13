@@ -13,11 +13,8 @@
 #include "spi.h"
 #include "tests.h"
 
-/*#define DEBUG*/
-
-#ifdef DEBUG
+/* For semihosting on newlib */
 extern void initialise_monitor_handles(void);
-#endif
 
 static void clock_init(void)
 {
@@ -26,6 +23,9 @@ static void clock_init(void)
 
 int main(void)
 {
+#if defined(ENABLE_SEMIHOSTING) && (ENABLE_SEMIHOSTING)
+    initialise_monitor_handles();
+#endif
     clock_init();
     display_init();
     systick_init();
@@ -33,11 +33,7 @@ int main(void)
     spi_slave_init();
     usb_init();
 
-    printf("init...\n");
-
-#ifdef DEBUG
-    initialise_monitor_handles();
-#endif
+    printf("Starting main loop...\n");
 
     while (1) {
         usb_poll();

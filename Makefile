@@ -23,9 +23,21 @@ OBJS = display.o utils.o usb.o spi.o tests.o
 
 OPENCM3_DIR=../libopencm3-examples/libopencm3
 LDSCRIPT = stm32f4-discovery.ld
-#LDLIBS += -lnosys
-#LDLIBS += -lrdimon
-#LDFLAGS += --specs=rdimon.specs
+
+# DEBUG=1 enables semihosting
+DEBUG ?= 0
+
+ifeq ($(DEBUG),1)
+LDFLAGS += --specs=rdimon.specs
+LDLIBS += -lrdimon
+DEFS += -DENABLE_SEMIHOSTING=1
+endif
 
 include libopencm3.target.mk
 
+console:
+	$(OOCD) -f interface/$(OOCD_INTERFACE).cfg \
+		    -f board/$(OOCD_BOARD).cfg \
+		    -c "init" -c "reset init" \
+		    -c "arm semihosting enable" \
+		    -c "reset"
