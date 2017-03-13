@@ -1,12 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libopencmsis/core_cm3.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/usb/usbd.h>
+#include <libopencm3/stm32/spi.h>
+#include <libopencm3/stm32/otg_fs.h>
 
 #include "usb.h"
 #include "display.h"
+#include "spi.h"
+#include "utils.h"
 
 static const struct usb_device_descriptor dev = {
     .bLength = USB_DT_DEVICE_SIZE,
@@ -72,41 +77,77 @@ static const char * usb_strings[] = {
     "1234",
 };
 
+static usbd_device *usbdev;
+
 /* Buffer to be used for control requests. */
 uint8_t usbd_control_buffer[128];
+
+/* Write position display backbuffer */
+static __IO unsigned int dispbuf_pos = 0;
 
 static int control_request(usbd_device *usbd_dev,
     struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
     void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
 {
+    DisplayBuf *dispbuf;
+
     (void)complete;
     (void)buf;
     (void)usbd_dev;
+    (void)len;
+
+    switch (req->bRequest) {
+        case USB_RGBM_SWAPBUFFERS:
+            spi_daisy_set_nss_high();
+            display_swapbuffers();
+            dispbuf_pos = 0;
+            spi_daisy_set_nss_low();
+            return 1;
+        case USB_RGBM_CLEAR:
+            /* TODO: Get color from USB */
+            dispbuf = display_get_backbuffer();
+            display_clear(dispbuf, 0, 0, 0);
+            /* Test pattern: */
+            /*display_clear(dispbuf, 0xcdcd, 0xcdcd, 0xcdcd);*/
+            /*display_set(dispbuf, 0, 0, 0xabab, 0xcdcd, 0xcdcd);*/
+            /*display_set(dispbuf, 7, 7, 0xcdcd, 0xcdcd, 0xefef);*/
+            return 1;
+        case USB_RGBM_DEBUG:
+            *buf[0] = dispbuf_pos;
+            return 1;
+        default:
+            break;
+    }
 
     return 0;
 }
 
-/*DisplayBuf buf;*/
-unsigned int i = 0;
-
 static void data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 {
+    /*static int cnt = 0;*/
+    uint8_t buf[64];
+    uint16_t i;
+    uint8_t *dispbuf = (uint8_t *)display_get_backbuffer();
+    uint16_t len = usbd_ep_read_packet(usbd_dev, 0x01, buf, sizeof(buf));
+
     (void)ep;
-    DisplayBuf *dispbuf = display_get_backbuffer();
-    char buf[64];
-    unsigned int remaining = sizeof(*dispbuf) - i;
-    int len = usbd_ep_read_packet(usbd_dev, 0x01, buf, 64);
 
-    if (len > remaining)
-        len = remaining;
-
-    memcpy((void *)dispbuf + i, buf, len);
-
-    i += len;
-    if (i == sizeof(*dispbuf)) {
-        i = 0;
-        display_swapbuffers();
+    for (i = 0; i < len; i++) {
+        /*printf("0x%x ", dispbuf[dispbuf_pos]);*/
+        spi_daisy_send(dispbuf[dispbuf_pos]);
+        dispbuf[dispbuf_pos] = buf[i];
+        dispbuf_pos = (dispbuf_pos + 1) % sizeof(DisplayBuf);
     }
+}
+
+static bool connected = false;
+
+static void suspend_callback(void)
+{
+    connected = false;
+
+    /* USB suspended, we're now SPI slave */
+    spi_daisy_init_slave();
 }
 
 static void set_config(usbd_device *usbd_dev, uint16_t wValue)
@@ -114,17 +155,20 @@ static void set_config(usbd_device *usbd_dev, uint16_t wValue)
     (void)wValue;
 
     usbd_ep_setup(usbd_dev, 0x01, USB_ENDPOINT_ATTR_BULK, 64, data_rx_cb);
-    /*usbd_ep_setup(usbd_dev, 0x82, USB_ENDPOINT_ATTR_BULK, 64, NULL);*/
-    /*usbd_ep_setup(usbd_dev, 0x83, USB_ENDPOINT_ATTR_INTERRUPT, 16, NULL);*/
 
-    /*usbd_register_control_callback(*/
-                /*usbd_dev,*/
-                /*USB_REQ_TYPE_CLASS | USB_REQ_TYPE_INTERFACE,*/
-                /*USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,*/
-                /*control_request);*/
+    usbd_register_control_callback(
+                usbd_dev,
+                USB_REQ_TYPE_VENDOR | USB_REQ_TYPE_ENDPOINT,
+                USB_REQ_TYPE_TYPE | USB_REQ_TYPE_RECIPIENT,
+                control_request);
+
+    usbd_register_suspend_callback(usbd_dev, suspend_callback);
+
+    connected = true;
+
+    /* USB configured, we're the SPI master */
+    spi_daisy_init_master();
 }
-
-static usbd_device *usbd_dev;
 
 void usb_init(void)
 {
@@ -135,14 +179,19 @@ void usb_init(void)
             GPIO9 | GPIO11 | GPIO12);
     gpio_set_af(GPIOA, GPIO_AF10, GPIO9 | GPIO11 | GPIO12);
 
-    usbd_dev = usbd_init(&otgfs_usb_driver, &dev, &config,
+    usbdev = usbd_init(&otgfs_usb_driver, &dev, &config,
             usb_strings, 3,
             usbd_control_buffer, sizeof(usbd_control_buffer));
 
-    usbd_register_set_config_callback(usbd_dev, set_config);
+    usbd_register_set_config_callback(usbdev, set_config);
 }
 
 void usb_poll(void)
 {
-    usbd_poll(usbd_dev);
+    usbd_poll(usbdev);
+}
+
+bool usb_connected(void)
+{
+    return connected;
 }

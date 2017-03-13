@@ -6,6 +6,7 @@
 #include <libopencm3/stm32/timer.h>
 
 #include "display.h"
+#include "spi.h"
 
 /*
  * Rows
@@ -67,7 +68,7 @@ static uint8_t current_row = 0;
 
 static DisplayBuf framebuffer[2];
 static __IO uint8_t front_buffer = 0;
-static __IO uint8_t fb_spin = 0;
+static __IO uint8_t swapbuffers = 0;
 
 /**
   * @brief  This function handles TIM1 global interrupt request.
@@ -86,19 +87,17 @@ void tim1_up_tim10_isr(void)
         current_row = (current_row + 1) % 8;
 
         if (current_row == 0) {
-            /*gpio_set(GPIOD, GPIO1);*/
-            fb_spin = 1;
+            if (swapbuffers) {
+                front_buffer = (front_buffer + 1) % 2;
+                swapbuffers = 0;
+                spi_daisy_swapbuffers();
+            }
         }
 
         for (i = 0; i < 8; i++) {
             *red[i] = framebuffer[front_buffer][current_row][i].r;
             *green[i] = framebuffer[front_buffer][current_row][i].g;
             *blue[i] = framebuffer[front_buffer][current_row][i].b;
-        }
-
-        if (current_row == 7) {
-            /*gpio_clear(GPIOD, GPIO1);*/
-            fb_spin = 0;
         }
 
         gpio_set(row_gpios[current_row].port, row_gpios[current_row].pin);
@@ -130,7 +129,6 @@ static void display_init_gpio(void)
     rcc_periph_clock_enable(RCC_GPIOA);
     rcc_periph_clock_enable(RCC_GPIOB);
     rcc_periph_clock_enable(RCC_GPIOC);
-    /*rcc_periph_clock_enable(RCC_GPIOD); // debug*/
 
     /*
      * Columns
@@ -504,13 +502,13 @@ static void display_init_tim(void)
     timer_enable_counter(TIM14);
 }
 
-static void display_enable()
+static void display_enable(void)
 {
     // Pull OE low to enable column drivers
     gpio_clear(GPIOA, GPIO4);
 }
 
-void display_init()
+void display_init(void)
 {
     display_init_gpio();
     display_init_tim();
@@ -525,12 +523,14 @@ DisplayBuf *display_get_backbuffer(void)
 
 void display_swapbuffers(void)
 {
-    while (fb_spin == 1)
+    swapbuffers = 1;
+    while (swapbuffers)
         ;
-    /*gpio_set(GPIOD, GPIO0);*/
-    front_buffer = (front_buffer + 1) % 2;
-    fb_spin = 1;
-    /*gpio_clear(GPIOD, GPIO0);*/
+}
+
+void display_swapbuffers_nowait(void)
+{
+    swapbuffers = 1;
 }
 
 void display_clear(DisplayBuf *buf, uint16_t r, uint16_t g, uint16_t b)
