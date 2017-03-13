@@ -90,9 +90,9 @@ static int control_request(usbd_device *usbd_dev,
     void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
 {
     DisplayBuf *dispbuf;
+    uint16_t r = 0, g = 0, b = 0;
 
     (void)complete;
-    (void)buf;
     (void)usbd_dev;
     (void)len;
 
@@ -104,9 +104,15 @@ static int control_request(usbd_device *usbd_dev,
             spi_daisy_set_nss_low();
             return 1;
         case USB_RGBM_CLEAR:
-            /* TODO: Get color from USB */
+            /* Get color from data phase (if any) */
+            if (req->wLength == 6) {
+                r = ((uint16_t *)(*buf))[0];
+                g = ((uint16_t *)(*buf))[1];
+                b = ((uint16_t *)(*buf))[2];
+            }
+
             dispbuf = display_get_backbuffer();
-            display_clear(dispbuf, 0, 0, 0);
+            display_clear(dispbuf, r, g, b);
             /* Test pattern: */
             /*display_clear(dispbuf, 0xcdcd, 0xcdcd, 0xcdcd);*/
             /*display_set(dispbuf, 0, 0, 0xabab, 0xcdcd, 0xcdcd);*/
