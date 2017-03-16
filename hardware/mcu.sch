@@ -682,7 +682,7 @@ F 1 "USB_B" H 10700 1150 50  0000 C CNN
 F 2 "Connect:USB_Micro-B" V 10700 850 50  0001 C CNN
 F 3 "" V 10700 850 50  0000 C CNN
 	1    10750 950 
-	0    1    1    0   
+	-1   0    0    -1  
 $EndComp
 $Comp
 L GND #PWR033
@@ -845,11 +845,7 @@ Wire Wire Line
 Wire Wire Line
 	10100 950  10450 950 
 Wire Wire Line
-	10350 850  10450 850 
-Wire Wire Line
-	10350 1150 10350 850 
-Wire Wire Line
-	10350 1150 10100 1150
+	10100 1150 10450 1150
 Wire Wire Line
 	8650 1050 9100 1050
 Wire Wire Line
@@ -857,8 +853,8 @@ Wire Wire Line
 Wire Wire Line
 	9100 1150 8700 1150
 Wire Wire Line
-	10450 1150 10450 1400
+	10450 1350 10450 1400
 Wire Wire Line
-	10850 1350 10450 1350
-Connection ~ 10450 1350
+	10450 1350 10850 1350
+Connection ~ 10750 1350
 $EndSCHEMATC
