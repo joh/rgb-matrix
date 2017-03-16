@@ -39,7 +39,7 @@ encoding utf-8
 Sheet 3 6
 Title "USB RGB Matrix"
 Date ""
-Rev "1.0"
+Rev "1.1"
 Comp ""
 Comment1 ""
 Comment2 ""
@@ -399,9 +399,7 @@ $EndComp
 Wire Wire Line
 	3400 2700 3450 2700
 Wire Wire Line
-	3450 2700 3450 2900
-Wire Wire Line
-	3450 2900 3450 2950
+	3450 2700 3450 2950
 Wire Wire Line
 	3550 2350 3400 2350
 Wire Wire Line
@@ -435,19 +433,13 @@ Wire Wire Line
 Wire Wire Line
 	2100 2350 2200 2350
 Wire Wire Line
-	3400 4400 3600 4400
-Wire Wire Line
-	3600 4400 3800 4400
+	3400 4400 3800 4400
 Wire Wire Line
 	3400 4500 3450 4500
 Wire Wire Line
-	3450 4500 3450 4700
+	3450 4500 3450 4750
 Wire Wire Line
-	3450 4700 3450 4750
-Wire Wire Line
-	1850 4400 2150 4400
-Wire Wire Line
-	2150 4400 2200 4400
+	1850 4400 2200 4400
 Wire Wire Line
 	2200 4500 2150 4500
 Wire Wire Line
@@ -483,19 +475,13 @@ Wire Wire Line
 Wire Wire Line
 	2100 4150 2200 4150
 Wire Wire Line
-	3400 6200 3600 6200
-Wire Wire Line
-	3600 6200 3800 6200
+	3400 6200 3800 6200
 Wire Wire Line
 	3400 6300 3450 6300
 Wire Wire Line
-	3450 6300 3450 6500
+	3450 6300 3450 6550
 Wire Wire Line
-	3450 6500 3450 6550
-Wire Wire Line
-	1850 6200 2150 6200
-Wire Wire Line
-	2150 6200 2200 6200
+	1850 6200 2200 6200
 Wire Wire Line
 	2200 6300 2150 6300
 Wire Wire Line
@@ -573,11 +559,7 @@ Wire Wire Line
 	2150 6300 2150 6200
 Connection ~ 2150 6200
 Wire Wire Line
-	1050 2600 1150 2600
-Wire Wire Line
-	1150 2600 2150 2600
-Wire Wire Line
-	2150 2600 2200 2600
+	1050 2600 2200 2600
 Connection ~ 2150 2600
 Wire Wire Line
 	2200 2700 2150 2700
@@ -585,9 +567,7 @@ Wire Wire Line
 	2150 2700 2150 2600
 Connection ~ 1150 2600
 Wire Wire Line
-	3400 2600 3600 2600
-Wire Wire Line
-	3600 2600 3800 2600
+	3400 2600 3800 2600
 Wire Wire Line
 	3600 4700 3450 4700
 Connection ~ 3450 4700
@@ -605,17 +585,11 @@ Wire Wire Line
 Wire Wire Line
 	6450 4000 6450 4050
 Wire Wire Line
-	6700 4300 6700 4300
+	6450 4300 8050 4300
 Connection ~ 6700 4300
 Connection ~ 6450 4300
 Wire Wire Line
-	6450 4250 6450 4300
-Wire Wire Line
-	6450 4300 6450 4350
-Wire Wire Line
-	6450 4300 6700 4300
-Wire Wire Line
-	6700 4300 8050 4300
+	6450 4250 6450 4350
 $Comp
 L Jumper_NC_Small JP1
 U 1 1 58750A6A

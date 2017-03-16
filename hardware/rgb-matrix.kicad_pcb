@@ -15,7 +15,7 @@
   (page A4)
   (title_block
     (title "USB RGB Matrix")
-    (rev 1.0)
+    (rev 1.1)
   )
 
   (layers
