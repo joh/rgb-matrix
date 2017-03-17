@@ -350,7 +350,43 @@ static void display_init_tim(void)
 
     timer_set_oc_mode(TIM14, TIM_OC1, TIM_OCM_PWM1);
 
-    /* OC Polarity high */
+    /* OC Polarity */
+#ifdef DISPLAY_COMMON_ANODE
+    /* Common-anode LED matrix */
+    timer_set_oc_polarity_low(TIM1, TIM_OC1);
+    timer_set_oc_polarity_low(TIM1, TIM_OC3);
+
+    timer_set_oc_polarity_low(TIM2, TIM_OC3);
+    timer_set_oc_polarity_low(TIM2, TIM_OC4);
+
+    timer_set_oc_polarity_low(TIM3, TIM_OC1);
+    timer_set_oc_polarity_low(TIM3, TIM_OC2);
+    timer_set_oc_polarity_low(TIM3, TIM_OC3);
+    timer_set_oc_polarity_low(TIM3, TIM_OC4);
+
+    timer_set_oc_polarity_low(TIM4, TIM_OC1);
+    timer_set_oc_polarity_low(TIM4, TIM_OC2);
+    timer_set_oc_polarity_low(TIM4, TIM_OC3);
+    timer_set_oc_polarity_low(TIM4, TIM_OC4);
+
+    timer_set_oc_polarity_low(TIM5, TIM_OC1);
+    timer_set_oc_polarity_low(TIM5, TIM_OC2);
+    timer_set_oc_polarity_low(TIM5, TIM_OC3);
+    timer_set_oc_polarity_low(TIM5, TIM_OC4);
+
+    timer_set_oc_polarity_low(TIM8, TIM_OC1);
+    timer_set_oc_polarity_low(TIM8, TIM_OC2);
+    timer_set_oc_polarity_low(TIM8, TIM_OC3);
+    timer_set_oc_polarity_low(TIM8, TIM_OC4);
+
+    timer_set_oc_polarity_low(TIM12, TIM_OC1);
+    timer_set_oc_polarity_low(TIM12, TIM_OC2);
+
+    timer_set_oc_polarity_low(TIM13, TIM_OC1);
+
+    timer_set_oc_polarity_low(TIM14, TIM_OC1);
+#else
+    /* Common-cathode LED matrix */
     timer_set_oc_polarity_high(TIM1, TIM_OC1);
     timer_set_oc_polarity_high(TIM1, TIM_OC3);
 
@@ -383,6 +419,7 @@ static void display_init_tim(void)
     timer_set_oc_polarity_high(TIM13, TIM_OC1);
 
     timer_set_oc_polarity_high(TIM14, TIM_OC1);
+#endif
 
     /* Enable OC preload */
     timer_enable_oc_preload(TIM1, TIM_OC1);
