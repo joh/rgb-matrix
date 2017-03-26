@@ -33,7 +33,7 @@ static const struct usb_device_descriptor dev = {
 static const struct usb_endpoint_descriptor data_endp[] = {{
     .bLength = USB_DT_ENDPOINT_SIZE,
     .bDescriptorType = USB_DT_ENDPOINT,
-    .bEndpointAddress = 0x01,
+    .bEndpointAddress = USB_RGBM_DATA_EP_ADDR,
     .bmAttributes = USB_ENDPOINT_ATTR_BULK,
     .wMaxPacketSize = 64,
     .bInterval = 1,
@@ -134,7 +134,7 @@ static void data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
     uint8_t buf[64];
     uint16_t i;
     uint8_t *dispbuf = (uint8_t *)display_get_backbuffer();
-    uint16_t len = usbd_ep_read_packet(usbd_dev, 0x01, buf, sizeof(buf));
+    uint16_t len = usbd_ep_read_packet(usbd_dev, USB_RGBM_DATA_EP_ADDR, buf, sizeof(buf));
 
     (void)ep;
 
