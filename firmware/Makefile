@@ -21,7 +21,7 @@ BINARY = main
 
 OBJS = display.o utils.o usb.o spi.o tests.o
 
-OPENCM3_DIR=../libopencm3-examples/libopencm3
+OPENCM3_DIR=../../libopencm3-examples/libopencm3
 LDSCRIPT = stm32f4-discovery.ld
 
 # Set to 1 if LED matrix is common anode
