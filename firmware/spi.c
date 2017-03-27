@@ -113,7 +113,7 @@ void spi_daisy_init_slave()
 
     /* PB12: SPI2_NSS (NSS input in slave mode) */
     gpios = GPIO12;
-    gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_NONE, gpios);
+    gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLUP, gpios);
     gpio_set_af(GPIOB, GPIO_AF5, gpios);
 
     /* Configure interrupt on rising edge of SPI2_NSS */
@@ -204,7 +204,7 @@ void spi_slave_init()
 
     /* PA15: SPI3_NSS */
     gpios = GPIO15;
-    gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, gpios);
+    gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_PULLUP, gpios);
     gpio_set_af(GPIOA, GPIO_AF6, gpios);
 
     /* Configure interrupt on rising edge of SPI3_NSS */
