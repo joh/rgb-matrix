@@ -24,6 +24,9 @@ class RGBMatrix(object):
         # Disabled as workaround for libopencm3 issue #755
         # self.dev.set_configuration()
 
+    def __del__(self):
+        usb.util.dispose_resources(self.dev)
+
     def write_frame(self, frame):
         data = array.array('H')
         data.fromlist(frame)

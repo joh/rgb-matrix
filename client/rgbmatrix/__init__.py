@@ -1,1 +1,1 @@
-from rgbmatrix import *
+from .rgbmatrix import *
