@@ -1,14 +1,19 @@
 from nose.tools import *
-from rgbmatrix import RGBMatrix
+from rgbmatrix import RGBMatrix, Frame
 import numpy as np
 import time
 from itertools import cycle
 
 dev = None
+layout = [[1,2]]
+num_height = len(layout)
+num_width = len(layout[0])
+height = num_height * 8
+width = num_width * 8
 
 def setup_module():
     global dev
-    dev = RGBMatrix()
+    dev = RGBMatrix(layout=layout)
 
 def teardown_module():
     global dev
@@ -35,8 +40,8 @@ def test_clear():
 
 def test_columns():
     for c in colors:
-        for i in range(8):
-            frame = np.zeros((8, 8, 3), dtype='uint16')
+        for i in range(width):
+            frame = Frame(size=(width, height), dtype='uint16')
             frame[:,i] = c * brightness
 
             dev.write_frame(frame)
@@ -46,8 +51,8 @@ def test_columns():
 
 def test_rows():
     for c in colors:
-        for i in range(8):
-            frame = np.zeros((8, 8, 3), dtype='uint16')
+        for i in range(height):
+            frame = Frame(size=(width, height), dtype='uint16')
             frame[i,:] = c * brightness
 
             dev.write_frame(frame)
@@ -65,8 +70,8 @@ def test_swapbuffers():
         dev.swapbuffers()
 
 def test_fps():
-    red_frame = (np.tile([1, 0, 0], 8*8) * brightness).reshape((8, 8, 3))
-    green_frame = (np.tile([0, 1, 0], 8*8) * brightness).reshape((8, 8, 3))
+    red_frame = Frame(size=(width, height), color=(brightness, 0, 0), dtype='uint16')
+    green_frame = Frame(size=(width, height), color=(0, brightness, 0), dtype='uint16')
     frames = cycle([red_frame, green_frame])
 
     n_frames = 100
@@ -75,8 +80,11 @@ def test_fps():
     for i in range(n_frames):
         frame = frames.next()
         dev.write_frame(frame)
+        # time.sleep(.1)
         dev.swapbuffers()
+        # time.sleep(.0005)
 
+    # dev.swapbuffers()
     t1 = time.time()
     fps = n_frames / (t1 - t0)
     print("{:.2f} fps".format(fps))
@@ -86,12 +94,12 @@ def test_brightness():
     for c in colors:
         brightness = 0;
 
-        frame = np.zeros((8, 8, 3), dtype='uint16')
+        frame = Frame(size=(width, height), dtype='uint16')
 
-        for i in range(8):
-            for j in range(8):
+        for i in range(height):
+            for j in range(width):
                 frame[i,j] = c * brightness
-                brightness += 0xffff/64
+                brightness += 0xffff/(width * height)
 
         dev.write_frame(frame)
         dev.swapbuffers();
@@ -110,9 +118,10 @@ def test_white():
 
 def test_random():
     for i in range(25):
-        frame = np.random.randint(0, brightness, (8, 8, 3))
+        frame = np.random.randint(0, brightness, (height, width, 3))
+        frame = Frame(frame, dtype='uint16')
         dev.write_frame(frame)
-        dev.swapbuffers();
+        dev.swapbuffers()
 
         time.sleep(0.1)
 
@@ -126,3 +135,17 @@ def test_fade():
             dev.clear(*(c * k ** 2))
             dev.swapbuffers()
 
+def test_fade2():
+    frame = Frame(size=(16,8), color=(0, 0, 0), dtype='uint16')
+    for c in colors:
+        for k in range(255):
+            frame[::] = c * k ** 2
+            dev.write_frame(frame)
+            dev.swapbuffers()
+            time.sleep(.0005)
+
+        for k in range(255, 0, -1):
+            frame[::] = c * k ** 2
+            dev.write_frame(frame)
+            dev.swapbuffers()
+            time.sleep(.0005)
