@@ -25,6 +25,30 @@ def cmd_clear(args):
     if not args.no_swapbuffers:
         rgbm.swapbuffers()
 
+def cmd_text(args):
+    rgbm = create_rgbm(args)
+
+    bg = tuple(args.background)
+    color = tuple(args.color)
+
+    frame = Frame(size=rgbm.size, color=bg)
+    frame = frame.text(args.text, color=color, size=9, pos=(0,0))
+    frame = frame.torgb16()
+
+    rgbm.write_frame(frame)
+    rgbm.swapbuffers()
+
+def cmd_random(args):
+    rgbm = create_rgbm(args)
+
+    width, height = rgbm.size
+    frame = np.random.randint(args.min, args.max + 1, (height, width, 3))
+    frame = Frame(frame)
+    frame = frame.torgb16()
+
+    rgbm.write_frame(frame)
+    rgbm.swapbuffers()
+
 def cmd_swapbuffers(args):
     rgbm = create_rgbm(args)
     rgbm.swapbuffers()
@@ -34,8 +58,6 @@ def cmd_layout(args):
 
     num_width, num_height = rgbm.layout_size
     width, height = rgbm.size
-
-    print("#width={} #height={}".format(num_width, num_height))
 
     frame = Frame(size=(width, height), color=(0, 0, 0))
 
@@ -66,6 +88,21 @@ if __name__ == '__main__':
     parser_clear.add_argument('b', nargs='?', default='0', help='blue value (default: %(default)s)')
     parser_clear.add_argument('-n', '--no-swapbuffers', action='store_true')
     parser_clear.set_defaults(func=cmd_clear)
+
+    parser_text = subparsers.add_parser('text', help='show text')
+    parser_text.add_argument('text')
+    parser_text.add_argument('-c', '--color', nargs=3, type=int,
+            metavar=('r', 'g', 'b'), default=(255, 255, 255),
+            help='text color')
+    parser_text.add_argument('-b', '--background', nargs=3, type=int,
+            metavar=('r', 'g', 'b'), default=(0, 0, 0),
+            help='background color')
+    parser_text.set_defaults(func=cmd_text)
+
+    parser_random = subparsers.add_parser('random', help='random colors')
+    parser_random.add_argument('--min', type=int, default=0)
+    parser_random.add_argument('--max', type=int, default=255)
+    parser_random.set_defaults(func=cmd_random)
 
     parser_swapbuffers = subparsers.add_parser('swapbuffers', help='perform swapbuffers')
     parser_swapbuffers.set_defaults(func=cmd_swapbuffers)
