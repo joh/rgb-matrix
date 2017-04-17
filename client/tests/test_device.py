@@ -39,7 +39,7 @@ def test_columns():
             frame = np.zeros((8, 8, 3), dtype='uint16')
             frame[:,i] = c * brightness
 
-            dev.write_frame(frame.flatten().tolist())
+            dev.write_frame(frame)
             dev.swapbuffers()
 
             time.sleep(0.1);
@@ -50,7 +50,7 @@ def test_rows():
             frame = np.zeros((8, 8, 3), dtype='uint16')
             frame[i,:] = c * brightness
 
-            dev.write_frame(frame.flatten().tolist())
+            dev.write_frame(frame)
             dev.swapbuffers()
 
             time.sleep(0.1);
@@ -65,8 +65,8 @@ def test_swapbuffers():
         dev.swapbuffers()
 
 def test_fps():
-    red_frame = np.tile([1, 0, 0], 8*8) * brightness
-    green_frame = np.tile([0, 1, 0], 8*8) * brightness
+    red_frame = (np.tile([1, 0, 0], 8*8) * brightness).reshape((8, 8, 3))
+    green_frame = (np.tile([0, 1, 0], 8*8) * brightness).reshape((8, 8, 3))
     frames = cycle([red_frame, green_frame])
 
     n_frames = 100
@@ -74,7 +74,7 @@ def test_fps():
 
     for i in range(n_frames):
         frame = frames.next()
-        dev.write_frame(frame.flatten().tolist())
+        dev.write_frame(frame)
         dev.swapbuffers()
 
     t1 = time.time()
@@ -93,7 +93,7 @@ def test_brightness():
                 frame[i,j] = c * brightness
                 brightness += 0xffff/64
 
-        dev.write_frame(frame.flatten().tolist())
+        dev.write_frame(frame)
         dev.swapbuffers();
         time.sleep(0.5)
 
@@ -111,7 +111,7 @@ def test_white():
 def test_random():
     for i in range(25):
         frame = np.random.randint(0, brightness, (8, 8, 3))
-        dev.write_frame(frame.flatten().tolist())
+        dev.write_frame(frame)
         dev.swapbuffers();
 
         time.sleep(0.1)
