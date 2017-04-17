@@ -102,6 +102,10 @@ static int control_request(usbd_device *usbd_dev,
             display_swapbuffers();
             dispbuf_pos = 0;
             spi_daisy_set_nss_low();
+
+            /* TODO: figure out a better way to sync displays on SPI */
+            usleep(500);
+
             return 1;
         case USB_RGBM_CLEAR:
             /* Get color from data phase (if any) */

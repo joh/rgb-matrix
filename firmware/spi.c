@@ -81,7 +81,10 @@ void spi_daisy_init_master()
     spi_disable(SPI2);
 
     spi_set_master_mode(SPI2);
-    spi_set_baudrate_prescaler(SPI2, 7); // TODO: increase once debug phase is over
+
+    /* ~1.3MHz SPI clock */
+    /* TODO: Figure out why faster clocks result in corrupted data */
+    spi_set_baudrate_prescaler(SPI2, 4);
     spi_enable_ss_output(SPI2);
 
     /* PB12: SPI2_NSS (controlled by master) */
@@ -137,9 +140,6 @@ void spi_daisy_set_nss_high()
     /* Wait for any pending transmission to complete */
     while (!(SPI_SR(SPI2) & SPI_SR_TXE));
     while ((SPI_SR(SPI2) & SPI_SR_BSY));
-    /* TODO: Sleep needed when testing with the BusPirate spisniffer.
-     * Check if needed with daisy chain device at full speed */
-    usleep(10);
 
     gpio_set(GPIOB, GPIO12);
 }
