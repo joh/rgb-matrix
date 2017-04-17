@@ -6,35 +6,36 @@ import numpy as np
 from rgbmatrix import RGBMatrix
 from rgbmatrix.frame import *
 
+def create_rgbm(args):
+    layout = list(ast.literal_eval(args.layout))
+    rgbm = RGBMatrix(layout=layout)
+
+    return rgbm
+
 def cmd_clear(args):
-    rgbm = RGBMatrix()
+    rgbm = create_rgbm(args)
 
     r = int(args.r, 16)
     g = int(args.g, 16)
     b = int(args.b, 16)
 
-    rgbm.clear(r, g, b)
+    frame = Frame(size=rgbm.size, color=(r, g, b), dtype='uint16')
+    rgbm.write_frame(frame)
 
     if not args.no_swapbuffers:
         rgbm.swapbuffers()
 
 def cmd_swapbuffers(args):
-    rgbm = RGBMatrix()
+    rgbm = create_rgbm(args)
     rgbm.swapbuffers()
 
-def cmd_test(args):
-    layout = list(ast.literal_eval(args.layout))
-    print("layout=", layout)
+def cmd_layout(args):
+    rgbm = create_rgbm(args)
 
-    rgbm = RGBMatrix(layout=layout)
-
-    num_height = len(layout)
-    num_width = len(layout[0])
+    num_width, num_height = rgbm.layout_size
+    width, height = rgbm.size
 
     print("#width={} #height={}".format(num_width, num_height))
-
-    height = num_height * 8
-    width = num_width * 8
 
     frame = Frame(size=(width, height), color=(0, 0, 0))
 
@@ -55,6 +56,8 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('-l', '--layout', type=str, default="[[1,2],[3,4]]")
+
     subparsers = parser.add_subparsers(help='sub-command help')
 
     parser_clear = subparsers.add_parser('clear', help='clear color')
@@ -67,9 +70,8 @@ if __name__ == '__main__':
     parser_swapbuffers = subparsers.add_parser('swapbuffers', help='perform swapbuffers')
     parser_swapbuffers.set_defaults(func=cmd_swapbuffers)
 
-    parser_test = subparsers.add_parser('test', help='perform test')
-    parser_test.add_argument('-l', '--layout', type=str, default="[[1,2],[3,4]]")
-    parser_test.set_defaults(func=cmd_test)
+    parser_layout = subparsers.add_parser('layout', help='show layout')
+    parser_layout.set_defaults(func=cmd_layout)
 
     args = parser.parse_args()
     args.func(args)

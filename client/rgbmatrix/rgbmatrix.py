@@ -12,8 +12,7 @@ USB_RGBM_DEBUG       = 0x99
 
 USB_RGBM_DATA_EP_ADDR = 0x01
 
-# 3 colors, 8x8 matrix
-FRAME_SIZE = 3 * 8 * 8;
+DISPLAY_SIZE = (8, 8)
 
 class RGBMatrix(object):
     def __init__(self, idVendor=0xcafe, idProduct=0xbabe, layout=[1]):
@@ -23,7 +22,7 @@ class RGBMatrix(object):
         if self.dev is None:
             raise ValueError("Could not find device")
 
-        self.layout = Layout(layout)
+        self.layout = Layout(layout, DISPLAY_SIZE)
 
         # Disabled as workaround for libopencm3 issue #755
         # self.dev.set_configuration()
@@ -32,7 +31,18 @@ class RGBMatrix(object):
         usb.util.dispose_resources(self.dev)
 
     def set_layout(self, layout):
-        self.layout = Layout(layout)
+        self.layout = Layout(layout, DISPLAY_SIZE)
+
+    @property
+    def layout_size(self):
+        layout = self.layout.layout
+        return (len(layout[0]), len(layout))
+
+    @property
+    def size(self):
+        display_size = self.layout.size
+        layout_size = self.layout_size
+        return (layout_size[0] * display_size[0], layout_size[1] * display_size[1])
 
     def write_frame(self, frame):
         # Reorder frames according to layout
