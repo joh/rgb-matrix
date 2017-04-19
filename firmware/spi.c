@@ -83,7 +83,8 @@ void spi_daisy_init_master()
     spi_set_master_mode(SPI2);
 
     /* ~1.3MHz SPI clock */
-    /* TODO: Figure out why faster clocks result in corrupted data */
+    /* Faster clocks cause overrun errors on the receiving end, i.e. the OVR
+     * bit is set in the SPI_SR register */
     spi_set_baudrate_prescaler(SPI2, 4);
     spi_enable_ss_output(SPI2);
 
