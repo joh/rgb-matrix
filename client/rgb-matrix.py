@@ -1,7 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse
 import ast
 import numpy as np
+from PIL import Image
+import time
+from itertools import cycle
 
 from rgbmatrix import RGBMatrix
 from rgbmatrix.frame import *
@@ -48,6 +51,45 @@ def cmd_random(args):
 
     rgbm.write_frame(frame)
     rgbm.swapbuffers()
+
+def show_image(rgbm, image):
+    frame = Image.new("RGB", rgbm.size, color=(0, 0, 0))
+    frame.paste(image, (0, 0))
+    frame = Frame(np.array(frame))
+    frame = frame.torgb16()
+
+    rgbm.write_frame(frame)
+    rgbm.swapbuffers()
+
+def extract_frames(image):
+    frames = []
+    i = 0
+    while True:
+        try:
+            image.seek(i)
+        except EOFError:
+            break
+        frames.append(image.copy())
+        i += 1
+    return frames
+
+def cmd_image(args):
+    rgbm = create_rgbm(args)
+
+    image = Image.open(args.image)
+    images = extract_frames(image)
+
+    if len(images) == 1:
+        show_image(rgbm, images[0])
+    else:
+        # animation
+        duration = image.info['duration']
+        if args.loop:
+            images = cycle(images)
+
+        for img in images:
+            show_image(rgbm, img)
+            time.sleep(duration / 1000)
 
 def cmd_swapbuffers(args):
     rgbm = create_rgbm(args)
@@ -103,6 +145,11 @@ if __name__ == '__main__':
     parser_random.add_argument('--min', type=int, default=0)
     parser_random.add_argument('--max', type=int, default=255)
     parser_random.set_defaults(func=cmd_random)
+
+    parser_image = subparsers.add_parser('image', help='show image')
+    parser_image.add_argument('image')
+    parser_image.add_argument('--loop', type=bool, default=True)
+    parser_image.set_defaults(func=cmd_image)
 
     parser_swapbuffers = subparsers.add_parser('swapbuffers', help='perform swapbuffers')
     parser_swapbuffers.set_defaults(func=cmd_swapbuffers)
