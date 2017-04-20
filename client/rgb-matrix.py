@@ -92,6 +92,36 @@ def cmd_image(args):
             show_image(rgbm, img)
             time.sleep(duration / 1000)
 
+def cmd_screencast(args):
+    rgbm = create_rgbm(args)
+
+    from tempfile import NamedTemporaryFile
+    from gi.repository import Gio, GLib
+
+    bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
+    screenshot = Gio.DBusProxy.new_sync(bus,
+            Gio.DBusProxyFlags.NONE, None,
+            'org.gnome.Shell.Screenshot',
+            '/org/gnome/Shell/Screenshot',
+            'org.gnome.Shell.Screenshot',
+            None)
+
+    x, y, width, height = screenshot.SelectArea()
+
+    with NamedTemporaryFile(suffix='.png', delete=False) as fp:
+        while True:
+            t0 = time.time()
+            success, filename = screenshot.ScreenshotArea('(iiiibs)', x, y, width, height, False, fp.name)
+            if success:
+                image = Image.open(filename)
+                if args.resize:
+                    image = image.resize(rgbm.size)
+                show_image(rgbm, image)
+
+                dt = 1 / args.fps - (time.time() - t0)
+                if dt > 0:
+                    time.sleep(dt)
+
 def cmd_swapbuffers(args):
     rgbm = create_rgbm(args)
     rgbm.swapbuffers()
@@ -153,6 +183,11 @@ if __name__ == '__main__':
     parser_image.add_argument('image')
     parser_image.add_argument('--loop', type=bool, default=True)
     parser_image.set_defaults(func=cmd_image)
+
+    parser_screencast = subparsers.add_parser('screencast', help='show screencast')
+    parser_screencast.add_argument('-r', '--resize', action='store_true')
+    parser_screencast.add_argument('-f', '--fps', type=int, default=60)
+    parser_screencast.set_defaults(func=cmd_screencast)
 
     parser_swapbuffers = subparsers.add_parser('swapbuffers', help='perform swapbuffers')
     parser_swapbuffers.set_defaults(func=cmd_swapbuffers)
