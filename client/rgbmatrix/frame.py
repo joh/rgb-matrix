@@ -88,6 +88,19 @@ class Frame(np.ndarray):
         rgb16 *= 0xffff // 255
         return rgb16
 
+    def gamma(self, gamma=2.2):
+        try:
+            dmax = np.iinfo(self.dtype).max
+        except ValueError:
+            # Not an integer type
+            dmax = 1.0
+
+        frame = self.astype('float64')
+        frame = (frame / dmax) ** gamma
+        frame = (frame * dmax).astype(self.dtype)
+
+        return frame
+
     # def __array_finalize__(self, obj):
         # if obj is None: return
         # self.size = getattr(obj, 'info', None)

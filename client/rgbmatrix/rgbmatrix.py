@@ -15,7 +15,7 @@ USB_RGBM_DATA_EP_ADDR = 0x01
 DISPLAY_SIZE = (8, 8)
 
 class RGBMatrix(object):
-    def __init__(self, idVendor=0xcafe, idProduct=0xbabe, layout=[1]):
+    def __init__(self, idVendor=0xcafe, idProduct=0xbabe, layout=[1], gamma=1):
         self.idVendor = idVendor
         self.idProduct = idProduct
         self.dev = usb.core.find(idVendor=0xcafe, idProduct=0xbabe)
@@ -23,6 +23,7 @@ class RGBMatrix(object):
             raise ValueError("Could not find device")
 
         self.layout = Layout(layout, DISPLAY_SIZE)
+        self.gamma = gamma
 
         # Disabled as workaround for libopencm3 issue #755
         # self.dev.set_configuration()
@@ -45,6 +46,10 @@ class RGBMatrix(object):
         return (layout_size[0] * display_size[0], layout_size[1] * display_size[1])
 
     def write_frame(self, frame):
+        # Apply gamma correction
+        if self.gamma != 1:
+            frame = frame.gamma(self.gamma)
+
         # Reorder frames according to layout
         subframes = self.layout.subframes(frame, 'reverse')
         subframes = np.array(subframes)

@@ -11,7 +11,7 @@ from rgbmatrix.frame import *
 
 def create_rgbm(args):
     layout = list(ast.literal_eval(args.layout))
-    rgbm = RGBMatrix(layout=layout)
+    rgbm = RGBMatrix(layout=layout, gamma=args.gamma)
 
     return rgbm
 
@@ -121,6 +121,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('-l', '--layout', type=str, default="[[1,2],[3,4]]")
+    parser.add_argument('-g', '--gamma', type=float, default=2.2)
 
     subparsers = parser.add_subparsers(help='sub-command help')
 

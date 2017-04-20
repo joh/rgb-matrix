@@ -149,3 +149,21 @@ def test_fade2():
             dev.write_frame(frame)
             dev.swapbuffers()
             time.sleep(.0005)
+
+
+def test_gamma():
+    for c in colors:
+        frame = Frame(size=(width, height), dtype='uint16')
+        brightness = 0
+        for i in range(height):
+            for j in range(width):
+                frame[i,j] = c * brightness
+                # print(brightness)
+                brightness += 0xffff/(width * height)
+
+        for gamma in np.arange(1, 4.1, 0.1):
+            print("gamma={:.1f}".format(gamma))
+            dev.gamma = gamma
+            dev.write_frame(frame)
+            dev.swapbuffers();
+            time.sleep(0.05)
