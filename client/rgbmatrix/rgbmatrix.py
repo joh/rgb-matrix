@@ -15,7 +15,7 @@ USB_RGBM_DATA_EP_ADDR = 0x01
 DISPLAY_SIZE = (8, 8)
 
 class RGBMatrix(object):
-    def __init__(self, idVendor=0xcafe, idProduct=0xbabe, layout=[1], gamma=1):
+    def __init__(self, idVendor=0xcafe, idProduct=0xbabe, layout=[1], gamma=1, brightness=0xffff):
         self.idVendor = idVendor
         self.idProduct = idProduct
         self.dev = usb.core.find(idVendor=0xcafe, idProduct=0xbabe)
@@ -24,6 +24,7 @@ class RGBMatrix(object):
 
         self.layout = Layout(layout, DISPLAY_SIZE)
         self.gamma = gamma
+        self.brightness = brightness
 
         # Disabled as workaround for libopencm3 issue #755
         # self.dev.set_configuration()
@@ -46,6 +47,12 @@ class RGBMatrix(object):
         return (layout_size[0] * display_size[0], layout_size[1] * display_size[1])
 
     def write_frame(self, frame):
+        frame = frame.astype('uint16')
+
+        # Apply brightness adjustment
+        if self.brightness != 0xffff:
+            frame = (frame * (self.brightness / 0xffff)).astype('uint16')
+
         # Apply gamma correction
         if self.gamma != 1:
             frame = frame.gamma(self.gamma)

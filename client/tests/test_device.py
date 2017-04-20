@@ -47,7 +47,7 @@ def test_columns():
             dev.write_frame(frame)
             dev.swapbuffers()
 
-            time.sleep(0.1);
+            time.sleep(0.1)
 
 def test_rows():
     for c in colors:
@@ -58,7 +58,7 @@ def test_rows():
             dev.write_frame(frame)
             dev.swapbuffers()
 
-            time.sleep(0.1);
+            time.sleep(0.1)
 
 def test_swapbuffers():
     dev = RGBMatrix()
@@ -92,7 +92,7 @@ def test_fps():
 
 def test_brightness():
     for c in colors:
-        brightness = 0;
+        brightness = 0
 
         frame = Frame(size=(width, height), dtype='uint16')
 
@@ -102,7 +102,7 @@ def test_brightness():
                 brightness += 0xffff/(width * height)
 
         dev.write_frame(frame)
-        dev.swapbuffers();
+        dev.swapbuffers()
         time.sleep(0.5)
 
 
@@ -165,5 +165,14 @@ def test_gamma():
             print("gamma={:.1f}".format(gamma))
             dev.gamma = gamma
             dev.write_frame(frame)
-            dev.swapbuffers();
+            dev.swapbuffers()
             time.sleep(0.05)
+
+def test_brightness_adjust():
+    frame = np.random.randint(0, 0xffff, (height, width, 3))
+    frame = Frame(frame, dtype='uint16')
+    for brightness in np.linspace(0, 0xffff, 25, dtype='uint16'):
+        dev.brightness = brightness
+        dev.write_frame(frame)
+        dev.swapbuffers()
+        time.sleep(0.1)
