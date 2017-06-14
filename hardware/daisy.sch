@@ -39,7 +39,7 @@ encoding utf-8
 Sheet 5 6
 Title "USB RGB Matrix"
 Date ""
-Rev "1.0"
+Rev "1.1"
 Comp ""
 Comment1 ""
 Comment2 ""
