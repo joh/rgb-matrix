@@ -134,8 +134,8 @@ def cmd_layout(args):
 
     frame = Frame(size=(width, height), color=(0, 0, 0))
 
-    for j in xrange(0, num_height):
-        for i in xrange(0, num_width):
+    for j in range(0, num_height):
+        for i in range(0, num_width):
             num = (j * (num_width)) + i + 1
             pos = (8*i+1, 8*j-1)
             frame = frame.text(str(num), pos)

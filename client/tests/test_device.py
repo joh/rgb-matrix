@@ -78,7 +78,7 @@ def test_fps():
     t0 = time.time()
 
     for i in range(n_frames):
-        frame = frames.next()
+        frame = next(frames)
         dev.write_frame(frame)
         # time.sleep(.1)
         dev.swapbuffers()
