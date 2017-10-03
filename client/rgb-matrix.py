@@ -196,4 +196,9 @@ if __name__ == '__main__':
     parser_layout.set_defaults(func=cmd_layout)
 
     args = parser.parse_args()
+
+    if not 'func' in args:
+        parser.print_usage()
+        parser.exit(2)
+
     args.func(args)
