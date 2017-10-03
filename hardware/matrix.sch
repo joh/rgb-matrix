@@ -1,0 +1,575 @@
+EESchema Schematic File Version 2
+LIBS:rgb-matrix-rescue
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:stm32
+LIBS:rgb-matrix
+LIBS:rgb-matrix-cache
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 2 6
+Title "USB RGB Matrix"
+Date ""
+Rev "1.1"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L CONN_01X16 P2
+U 1 1 580CC959
+P 7150 3650
+F 0 "P2" H 7150 4500 50  0000 C CNN
+F 1 "MATRIX_TOP" V 7250 3650 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_1x16" H 7150 3650 50  0001 C CNN
+F 3 "" H 7150 3650 50  0000 C CNN
+	1    7150 3650
+	1    0    0    1   
+$EndComp
+$Comp
+L CONN_01X16 P1
+U 1 1 580CCEB9
+P 4300 3650
+F 0 "P1" H 4300 4500 50  0000 C CNN
+F 1 "MATRIX_BOT" V 4400 3650 50  0000 C CNN
+F 2 "Socket_Strips:Socket_Strip_Straight_1x16" H 4300 3650 50  0001 C CNN
+F 3 "" H 4300 3650 50  0000 C CNN
+	1    4300 3650
+	-1   0    0    -1  
+$EndComp
+$Comp
+L R R12
+U 1 1 580CD3AE
+P 4900 4400
+F 0 "R12" V 4980 4400 50  0000 C CNN
+F 1 "100" V 4900 4400 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 4400 50  0001 C CNN
+F 3 "" H 4900 4400 50  0000 C CNN
+	1    4900 4400
+	0    1    1    0   
+$EndComp
+$Comp
+L R R1
+U 1 1 580CD539
+P 4900 2900
+F 0 "R1" V 4980 2900 50  0000 C CNN
+F 1 "100" V 4900 2900 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 2900 50  0001 C CNN
+F 3 "" H 4900 2900 50  0000 C CNN
+	1    4900 2900
+	0    1    1    0   
+$EndComp
+$Comp
+L R R2
+U 1 1 580CD5C9
+P 4900 3000
+F 0 "R2" V 4980 3000 50  0000 C CNN
+F 1 "100" V 4900 3000 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 3000 50  0001 C CNN
+F 3 "" H 4900 3000 50  0000 C CNN
+	1    4900 3000
+	0    1    1    0   
+$EndComp
+$Comp
+L R R3
+U 1 1 580CD63E
+P 4900 3100
+F 0 "R3" V 4980 3100 50  0000 C CNN
+F 1 "100" V 4900 3100 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 3100 50  0001 C CNN
+F 3 "" H 4900 3100 50  0000 C CNN
+	1    4900 3100
+	0    1    1    0   
+$EndComp
+$Comp
+L R R4
+U 1 1 580CD660
+P 4900 3200
+F 0 "R4" V 4980 3200 50  0000 C CNN
+F 1 "100" V 4900 3200 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 3200 50  0001 C CNN
+F 3 "" H 4900 3200 50  0000 C CNN
+	1    4900 3200
+	0    1    1    0   
+$EndComp
+$Comp
+L R R5
+U 1 1 580CD689
+P 4900 3300
+F 0 "R5" V 4980 3300 50  0000 C CNN
+F 1 "100" V 4900 3300 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 3300 50  0001 C CNN
+F 3 "" H 4900 3300 50  0000 C CNN
+	1    4900 3300
+	0    1    1    0   
+$EndComp
+$Comp
+L R R6
+U 1 1 580CD6B1
+P 4900 3400
+F 0 "R6" V 4980 3400 50  0000 C CNN
+F 1 "100" V 4900 3400 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 3400 50  0001 C CNN
+F 3 "" H 4900 3400 50  0000 C CNN
+	1    4900 3400
+	0    1    1    0   
+$EndComp
+$Comp
+L R R11
+U 1 1 580CD6DC
+P 4900 4300
+F 0 "R11" V 4980 4300 50  0000 C CNN
+F 1 "100" V 4900 4300 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 4300 50  0001 C CNN
+F 3 "" H 4900 4300 50  0000 C CNN
+	1    4900 4300
+	0    1    1    0   
+$EndComp
+$Comp
+L R R10
+U 1 1 580CD70E
+P 4900 4200
+F 0 "R10" V 4980 4200 50  0000 C CNN
+F 1 "100" V 4900 4200 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 4200 50  0001 C CNN
+F 3 "" H 4900 4200 50  0000 C CNN
+	1    4900 4200
+	0    1    1    0   
+$EndComp
+Text Label 4600 2900 0    60   ~ 0
+1
+Text Label 4600 3000 0    60   ~ 0
+2
+Text Label 4600 3100 0    60   ~ 0
+3
+Text Label 4600 3200 0    60   ~ 0
+4
+Text Label 4600 3300 0    60   ~ 0
+5
+Text Label 4600 3400 0    60   ~ 0
+6
+Text Label 4600 3500 0    60   ~ 0
+7
+Text Label 4600 3600 0    60   ~ 0
+8
+Text Label 4600 3700 0    60   ~ 0
+9
+Text Label 4600 3800 0    60   ~ 0
+10
+Text Label 4600 3900 0    60   ~ 0
+11
+Text Label 4600 4000 0    60   ~ 0
+12
+Text Label 4600 4100 0    60   ~ 0
+13
+Text Label 4600 4200 0    60   ~ 0
+14
+Text Label 4600 4300 0    60   ~ 0
+15
+Text Label 4600 4400 0    60   ~ 0
+16
+$Comp
+L R R9
+U 1 1 580CE826
+P 4900 4100
+F 0 "R9" V 4980 4100 50  0000 C CNN
+F 1 "100" V 4900 4100 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 4100 50  0001 C CNN
+F 3 "" H 4900 4100 50  0000 C CNN
+	1    4900 4100
+	0    1    1    0   
+$EndComp
+$Comp
+L R R8
+U 1 1 580CE87E
+P 4900 4000
+F 0 "R8" V 4980 4000 50  0000 C CNN
+F 1 "100" V 4900 4000 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 4000 50  0001 C CNN
+F 3 "" H 4900 4000 50  0000 C CNN
+	1    4900 4000
+	0    1    1    0   
+$EndComp
+$Comp
+L R R7
+U 1 1 580CE8C2
+P 4900 3900
+F 0 "R7" V 4980 3900 50  0000 C CNN
+F 1 "100" V 4900 3900 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 4830 3900 50  0001 C CNN
+F 3 "" H 4900 3900 50  0000 C CNN
+	1    4900 3900
+	0    1    1    0   
+$EndComp
+$Comp
+L R R13
+U 1 1 580CF5F3
+P 6550 2900
+F 0 "R13" V 6630 2900 50  0000 C CNN
+F 1 "100" V 6550 2900 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 2900 50  0001 C CNN
+F 3 "" H 6550 2900 50  0000 C CNN
+	1    6550 2900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R24
+U 1 1 580CF5F9
+P 6550 4400
+F 0 "R24" V 6630 4400 50  0000 C CNN
+F 1 "100" V 6550 4400 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 4400 50  0001 C CNN
+F 3 "" H 6550 4400 50  0000 C CNN
+	1    6550 4400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R23
+U 1 1 580CF5FF
+P 6550 4300
+F 0 "R23" V 6630 4300 50  0000 C CNN
+F 1 "100" V 6550 4300 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 4300 50  0001 C CNN
+F 3 "" H 6550 4300 50  0000 C CNN
+	1    6550 4300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R22
+U 1 1 580CF605
+P 6550 4200
+F 0 "R22" V 6630 4200 50  0000 C CNN
+F 1 "100" V 6550 4200 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 4200 50  0001 C CNN
+F 3 "" H 6550 4200 50  0000 C CNN
+	1    6550 4200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R21
+U 1 1 580CF60B
+P 6550 4100
+F 0 "R21" V 6630 4100 50  0000 C CNN
+F 1 "100" V 6550 4100 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 4100 50  0001 C CNN
+F 3 "" H 6550 4100 50  0000 C CNN
+	1    6550 4100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R20
+U 1 1 580CF611
+P 6550 4000
+F 0 "R20" V 6630 4000 50  0000 C CNN
+F 1 "100" V 6550 4000 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 4000 50  0001 C CNN
+F 3 "" H 6550 4000 50  0000 C CNN
+	1    6550 4000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R19
+U 1 1 580CF617
+P 6550 3900
+F 0 "R19" V 6630 3900 50  0000 C CNN
+F 1 "100" V 6550 3900 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 3900 50  0001 C CNN
+F 3 "" H 6550 3900 50  0000 C CNN
+	1    6550 3900
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R14
+U 1 1 580CF61D
+P 6550 3000
+F 0 "R14" V 6630 3000 50  0000 C CNN
+F 1 "100" V 6550 3000 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 3000 50  0001 C CNN
+F 3 "" H 6550 3000 50  0000 C CNN
+	1    6550 3000
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R15
+U 1 1 580CF623
+P 6550 3100
+F 0 "R15" V 6630 3100 50  0000 C CNN
+F 1 "100" V 6550 3100 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 3100 50  0001 C CNN
+F 3 "" H 6550 3100 50  0000 C CNN
+	1    6550 3100
+	0    -1   -1   0   
+$EndComp
+Text Label 6850 4400 2    60   ~ 0
+17
+Text Label 6850 4300 2    60   ~ 0
+18
+Text Label 6850 4200 2    60   ~ 0
+19
+Text Label 6850 4100 2    60   ~ 0
+20
+Text Label 6850 4000 2    60   ~ 0
+21
+Text Label 6850 3900 2    60   ~ 0
+22
+Text Label 6850 3800 2    60   ~ 0
+23
+Text Label 6850 3700 2    60   ~ 0
+24
+Text Label 6850 3600 2    60   ~ 0
+25
+Text Label 6850 3500 2    60   ~ 0
+26
+Text Label 6850 3400 2    60   ~ 0
+27
+Text Label 6850 3300 2    60   ~ 0
+28
+Text Label 6850 3200 2    60   ~ 0
+29
+Text Label 6850 3100 2    60   ~ 0
+30
+Text Label 6850 3000 2    60   ~ 0
+31
+Text Label 6850 2900 2    60   ~ 0
+32
+$Comp
+L R R16
+U 1 1 580CF639
+P 6550 3200
+F 0 "R16" V 6630 3200 50  0000 C CNN
+F 1 "100" V 6550 3200 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 3200 50  0001 C CNN
+F 3 "" H 6550 3200 50  0000 C CNN
+	1    6550 3200
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R17
+U 1 1 580CF63F
+P 6550 3300
+F 0 "R17" V 6630 3300 50  0000 C CNN
+F 1 "100" V 6550 3300 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 3300 50  0001 C CNN
+F 3 "" H 6550 3300 50  0000 C CNN
+	1    6550 3300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R18
+U 1 1 580CF645
+P 6550 3400
+F 0 "R18" V 6630 3400 50  0000 C CNN
+F 1 "100" V 6550 3400 50  0000 C CNN
+F 2 "rgb-matrix:R_0805" V 6480 3400 50  0001 C CNN
+F 3 "" H 6550 3400 50  0000 C CNN
+	1    6550 3400
+	0    -1   -1   0   
+$EndComp
+Text GLabel 5150 2900 2    60   Input ~ 0
+R1
+Text GLabel 5150 3000 2    60   Input ~ 0
+B1
+Text GLabel 5150 3100 2    60   Input ~ 0
+G2
+Text GLabel 5150 3200 2    60   Input ~ 0
+R3
+Text GLabel 5150 3300 2    60   Input ~ 0
+B3
+Text GLabel 5150 3400 2    60   Input ~ 0
+G4
+Text GLabel 5150 3500 2    60   Input ~ 0
+ROW8
+Text GLabel 5150 3600 2    60   Input ~ 0
+ROW7
+Text GLabel 5150 3700 2    60   Input ~ 0
+ROW6
+Text GLabel 5150 3800 2    60   Input ~ 0
+ROW5
+Text GLabel 5150 3900 2    60   Input ~ 0
+R5
+Text GLabel 5150 4000 2    60   Input ~ 0
+G5
+Text GLabel 5150 4100 2    60   Input ~ 0
+B6
+Text GLabel 5150 4200 2    60   Input ~ 0
+R7
+Text GLabel 5150 4300 2    60   Input ~ 0
+G7
+Text GLabel 5150 4400 2    60   Input ~ 0
+B8
+Text GLabel 6300 4400 0    60   Input ~ 0
+G8
+Text GLabel 6300 4300 0    60   Input ~ 0
+R8
+Text GLabel 6300 4200 0    60   Input ~ 0
+B7
+Text GLabel 6300 4100 0    60   Input ~ 0
+G6
+Text GLabel 6300 4000 0    60   Input ~ 0
+R6
+Text GLabel 6300 3900 0    60   Input ~ 0
+B5
+Text GLabel 6300 3800 0    60   Input ~ 0
+ROW4
+Text GLabel 6300 3700 0    60   Input ~ 0
+ROW3
+Text GLabel 6300 3600 0    60   Input ~ 0
+ROW2
+Text GLabel 6300 3500 0    60   Input ~ 0
+ROW1
+Text GLabel 6300 3400 0    60   Input ~ 0
+B4
+Text GLabel 6300 3300 0    60   Input ~ 0
+R4
+Text GLabel 6300 3200 0    60   Input ~ 0
+G3
+Text GLabel 6300 3100 0    60   Input ~ 0
+B2
+Text GLabel 6300 3000 0    60   Input ~ 0
+R2
+Text GLabel 6300 2900 0    60   Input ~ 0
+G1
+Wire Wire Line
+	4500 2900 4750 2900
+Wire Wire Line
+	4500 3000 4750 3000
+Wire Wire Line
+	4500 3100 4750 3100
+Wire Wire Line
+	4500 3200 4750 3200
+Wire Wire Line
+	4500 3300 4750 3300
+Wire Wire Line
+	4500 3400 4750 3400
+Wire Wire Line
+	4500 3500 5150 3500
+Wire Wire Line
+	4500 3600 5150 3600
+Wire Wire Line
+	4500 3700 5150 3700
+Wire Wire Line
+	4500 3800 5150 3800
+Wire Wire Line
+	4500 3900 4750 3900
+Wire Wire Line
+	4500 4000 4750 4000
+Wire Wire Line
+	4500 4100 4750 4100
+Wire Wire Line
+	4500 4200 4750 4200
+Wire Wire Line
+	4500 4300 4750 4300
+Wire Wire Line
+	4500 4400 4750 4400
+Wire Wire Line
+	6950 4400 6700 4400
+Wire Wire Line
+	6950 4300 6700 4300
+Wire Wire Line
+	6950 4200 6700 4200
+Wire Wire Line
+	6950 4100 6700 4100
+Wire Wire Line
+	6950 4000 6700 4000
+Wire Wire Line
+	6950 3900 6700 3900
+Wire Wire Line
+	6300 3800 6950 3800
+Wire Wire Line
+	6300 3700 6950 3700
+Wire Wire Line
+	6300 3600 6950 3600
+Wire Wire Line
+	6300 3500 6950 3500
+Wire Wire Line
+	6950 3400 6700 3400
+Wire Wire Line
+	6950 3300 6700 3300
+Wire Wire Line
+	6950 3200 6700 3200
+Wire Wire Line
+	6950 3100 6700 3100
+Wire Wire Line
+	6950 3000 6700 3000
+Wire Wire Line
+	6950 2900 6700 2900
+Wire Wire Line
+	5050 2900 5150 2900
+Wire Wire Line
+	5050 3000 5150 3000
+Wire Wire Line
+	5050 3100 5150 3100
+Wire Wire Line
+	5050 3200 5150 3200
+Wire Wire Line
+	5050 3300 5150 3300
+Wire Wire Line
+	5050 3400 5150 3400
+Wire Wire Line
+	5050 3900 5150 3900
+Wire Wire Line
+	5050 4000 5150 4000
+Wire Wire Line
+	5050 4100 5150 4100
+Wire Wire Line
+	5050 4200 5150 4200
+Wire Wire Line
+	5050 4300 5150 4300
+Wire Wire Line
+	5050 4400 5150 4400
+Wire Wire Line
+	6400 4400 6300 4400
+Wire Wire Line
+	6400 4300 6300 4300
+Wire Wire Line
+	6400 4200 6300 4200
+Wire Wire Line
+	6400 4100 6300 4100
+Wire Wire Line
+	6400 4000 6300 4000
+Wire Wire Line
+	6400 3900 6300 3900
+Wire Wire Line
+	6400 3400 6300 3400
+Wire Wire Line
+	6400 3300 6300 3300
+Wire Wire Line
+	6400 3200 6300 3200
+Wire Wire Line
+	6400 3100 6300 3100
+Wire Wire Line
+	6400 3000 6300 3000
+Wire Wire Line
+	6400 2900 6300 2900
+$EndSCHEMATC
