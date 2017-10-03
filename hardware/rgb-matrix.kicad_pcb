@@ -1,4 +1,4 @@
-(kicad_pcb (version 4) (host pcbnew 4.0.6-e0-6349~53~ubuntu16.04.1)
+(kicad_pcb (version 4) (host pcbnew 4.0.7-e2-6376~58~ubuntu16.04.1)
 
   (general
     (links 306)
@@ -1201,10 +1201,10 @@
       (net 2 /mcu/NRST))
     (pad 6 thru_hole oval (at 0 12.7) (size 2.032 1.7272) (drill 1.016) (layers *.Cu *.Mask F.SilkS)
       (net 44 /mcu/SWO))
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x06.wrl
-      (at (xyz 0 -0.25 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x06_Pitch2.54mm.wrl
+      (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
+      (rotate (xyz 0 0 0))
     )
   )
 
@@ -1242,10 +1242,10 @@
       (net 48 /mcu/SPI3_NSS))
     (pad 6 thru_hole oval (at 0 12.7) (size 2.032 1.7272) (drill 1.016) (layers *.Cu *.Mask F.SilkS)
       (net 1 GND))
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x06.wrl
-      (at (xyz 0 -0.25 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x06_Pitch2.54mm.wrl
+      (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
+      (rotate (xyz 0 0 0))
     )
   )
 
@@ -1281,10 +1281,10 @@
     (pad 5 thru_hole oval (at 0 10.16) (size 2.032 1.7272) (drill 1.016) (layers *.Cu *.Mask F.SilkS)
       (net 49 /mcu/UART5_RX))
     (pad 6 thru_hole oval (at 0 12.7) (size 2.032 1.7272) (drill 1.016) (layers *.Cu *.Mask F.SilkS))
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x06.wrl
-      (at (xyz 0 -0.25 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x06_Pitch2.54mm.wrl
+      (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
+      (rotate (xyz 0 0 0))
     )
   )
 
@@ -1785,7 +1785,7 @@
       (net 24 /matrix/15))
     (pad 16 thru_hole oval (at 38.1 0 180) (size 1.7272 2.032) (drill 1.016) (layers *.Cu *.Mask)
       (net 25 /matrix/16))
-    (model Socket_Strips.3dshapes/Socket_Strip_Straight_1x16.wrl
+    (model Socket_Strips.3dshapes/Socket_Strip_Straight_1x16_Pitch2.54mm.wrl
       (at (xyz 0.75 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 180))
@@ -1846,7 +1846,7 @@
       (net 40 /matrix/31))
     (pad 16 thru_hole oval (at 38.1 0) (size 1.7272 2.032) (drill 1.016) (layers *.Cu *.Mask)
       (net 41 /matrix/32))
-    (model Socket_Strips.3dshapes/Socket_Strip_Straight_1x16.wrl
+    (model Socket_Strips.3dshapes/Socket_Strip_Straight_1x16_Pitch2.54mm.wrl
       (at (xyz 0.75 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 180))
@@ -1881,10 +1881,10 @@
       (net 122 /daisy/DATAWEST))
     (pad 3 thru_hole oval (at 0 5.08) (size 2.032 1.7272) (drill 1.016) (layers *.Cu *.Mask)
       (net 78 SPI2_MISO))
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x03.wrl
-      (at (xyz 0 -0.1 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x03_Pitch2.54mm.wrl
+      (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
+      (rotate (xyz 0 0 0))
     )
   )
 
@@ -1916,10 +1916,10 @@
       (net 123 /daisy/DATANORTH))
     (pad 3 thru_hole oval (at 0 5.08 90) (size 2.032 1.7272) (drill 1.016) (layers *.Cu *.Mask)
       (net 78 SPI2_MISO))
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x03.wrl
-      (at (xyz 0 -0.1 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x03_Pitch2.54mm.wrl
+      (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
+      (rotate (xyz 0 0 0))
     )
   )
 
@@ -1951,10 +1951,10 @@
       (net 124 /daisy/DATASOUTH))
     (pad 3 thru_hole oval (at 0 5.08 90) (size 2.032 1.7272) (drill 1.016) (layers *.Cu *.Mask)
       (net 78 SPI2_MISO))
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x03.wrl
-      (at (xyz 0 -0.1 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x03_Pitch2.54mm.wrl
+      (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
+      (rotate (xyz 0 0 0))
     )
   )
 
@@ -1986,10 +1986,10 @@
       (net 125 /daisy/DATAEAST))
     (pad 3 thru_hole oval (at 0 5.08) (size 2.032 1.7272) (drill 1.016) (layers *.Cu *.Mask)
       (net 78 SPI2_MISO))
-    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x03.wrl
-      (at (xyz 0 -0.1 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Straight_1x03_Pitch2.54mm.wrl
+      (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
+      (rotate (xyz 0 0 0))
     )
   )
 
@@ -2031,6 +2031,11 @@
       (net 1 GND))
     (pad 6 thru_hole oval (at 3.4991 1.13746 180) (size 1.55 1) (drill oval 1.15 0.5) (layers *.Cu *.Mask)
       (net 1 GND))
+    (model Connectors_USB.3dshapes/USB_Micro-B_Molex_47346-0001.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module LEDs:LED_1206 (layer Top) (tedit 588157D6) (tstamp 5876CF0B)
@@ -3777,7 +3782,7 @@
       (net 8 +5V))
     (pad 7 thru_hole oval (at 15.24 0 90) (size 1.7272 2.032) (drill 1.016) (layers *.Cu *.Mask)
       (net 8 +5V))
-    (model Socket_Strips.3dshapes/Socket_Strip_Angled_1x07.wrl
+    (model Socket_Strips.3dshapes/Socket_Strip_Angled_1x07_Pitch2.54mm.wrl
       (at (xyz 0.3 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 180))
@@ -3948,10 +3953,10 @@
       (net 1 GND))
     (pad 7 thru_hole oval (at 0 15.24 90) (size 1.7 1.7) (drill 1) (layers *.Cu *.Mask)
       (net 1 GND))
-    (model Pin_Headers.3dshapes/Pin_Header_Angled_1x07.wrl
-      (at (xyz 0 -0.3 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Angled_1x07_Pitch2.54mm.wrl
+      (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
+      (rotate (xyz 0 0 0))
     )
   )
 
@@ -4009,7 +4014,7 @@
       (net 1 GND))
     (pad 7 thru_hole oval (at 15.24 0) (size 1.7272 2.032) (drill 1.016) (layers *.Cu *.Mask)
       (net 1 GND))
-    (model Socket_Strips.3dshapes/Socket_Strip_Angled_1x07.wrl
+    (model Socket_Strips.3dshapes/Socket_Strip_Angled_1x07_Pitch2.54mm.wrl
       (at (xyz 0.3 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 180))
@@ -4180,10 +4185,10 @@
       (net 8 +5V))
     (pad 7 thru_hole oval (at 0 15.24 180) (size 1.7 1.7) (drill 1) (layers *.Cu *.Mask)
       (net 8 +5V))
-    (model Pin_Headers.3dshapes/Pin_Header_Angled_1x07.wrl
-      (at (xyz 0 -0.3 0))
+    (model Pin_Headers.3dshapes/Pin_Header_Angled_1x07_Pitch2.54mm.wrl
+      (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 90))
+      (rotate (xyz 0 0 0))
     )
   )
 
@@ -4254,10 +4259,10 @@
     (pad 5 smd rect (at 0 -0.925 270) (size 0.4 1.05) (layers Top F.Paste F.Mask))
     (pad 6 smd rect (at -0.65 -0.925 270) (size 0.4 1.05) (layers Top F.Paste F.Mask)
       (net 116 "Net-(P7-Pad3)"))
-    (model TO_SOT_Packages_SMD.3dshapes/SC-70-6.wrl
+    (model TO_SOT_Packages_SMD.3dshapes/SOT-363_SC-70-6.wrl
       (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz 0 0 -90))
     )
   )
 
