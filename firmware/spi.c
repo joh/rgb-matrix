@@ -4,6 +4,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/exti.h>
+#include <libopencm3/stm32/dma.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/syscfg.h>
 
@@ -37,10 +38,20 @@ void spi_daisy_swapbuffers(void)
 
     uint8_t *dispbuf = (uint8_t *)display_get_backbuffer();
 
-    /* Slaves in the daisy chain need to prepare the TX buffer so it's ready
-     * when the first byte is clocked in to the RX buffer. Fill the TX buffer
-     * with the first byte to be overwritten in the framebuffer */
-    spi_daisy_write(dispbuf[0]);
+    /* SPI2 RX */
+    dma_disable_stream(DMA1, DMA_STREAM3);
+    dma_set_memory_address(DMA1, DMA_STREAM3, (uint32_t) dispbuf);
+    dma_enable_stream(DMA1, DMA_STREAM3);
+
+    /* SPI2 TX */
+    dma_disable_stream(DMA1, DMA_STREAM4);
+    /* At this point, SPI2_DR will contain the first byte of the front buffer,
+     * due to the circular DMA mode wrapping around. This incorrect byte will
+     * be transferred first, but eventually past the last buffer in the daisy
+     * chain. In order for the DMA number of data items to be correctly
+     * aligned, we need to offset the memory address by one. */
+    dma_set_memory_address(DMA1, DMA_STREAM4, (uint32_t) (dispbuf+1));
+    dma_enable_stream(DMA1, DMA_STREAM4);
 }
 
 /* SPI slave */
@@ -60,20 +71,6 @@ void spi3_isr(void)
     SPI_DR(SPI3) = dispbuf[dispbuf_pos];
 }
 
-/* Daisy slave */
-void spi2_isr(void)
-{
-    uint8_t *dispbuf = (uint8_t *)display_get_backbuffer();
-    uint8_t byte = SPI_DR(SPI2);
-
-    /* Fill framebuffer with received byte */
-    dispbuf[dispbuf_pos] = byte;
-    dispbuf_pos = (dispbuf_pos + 1) % sizeof(DisplayBuf);
-
-    /* Prepare next (oldest) byte in the framebuffer for the next transmission */
-    SPI_DR(SPI2) = dispbuf[dispbuf_pos];
-}
-
 void spi_daisy_init_master()
 {
     uint16_t gpios = 0;
@@ -85,13 +82,12 @@ void spi_daisy_init_master()
     /* ~1.3MHz SPI clock */
     /* Faster clocks cause overrun errors on the receiving end, i.e. the OVR
      * bit is set in the SPI_SR register */
-    spi_set_baudrate_prescaler(SPI2, 4);
+    spi_set_baudrate_prescaler(SPI2, 1);
     spi_enable_ss_output(SPI2);
 
     /* PB12: SPI2_NSS (controlled by master) */
     gpios = GPIO12;
     gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, gpios);
-    spi_daisy_set_nss_low();
 
     /* Don't need interrupts in master mode */
     nvic_disable_irq(NVIC_SPI2_IRQ);
@@ -99,7 +95,22 @@ void spi_daisy_init_master()
 
     exti_disable_request(EXTI12);
 
+    /* No DMA in master mode */
+    spi_disable_rx_dma(SPI2);
+    spi_disable_tx_dma(SPI2);
+    dma_disable_stream(DMA1, DMA_STREAM3);
+    dma_disable_stream(DMA1, DMA_STREAM4);
+
+    /* HACK: SPI_DR has already been written to by DMA initiated by
+     * spi_daisy_init_slave, and there's no way to flush the transmit buffer
+     * from software. So we hold NSS high while we flush the data, so it is
+     * ignored by the slaves. */
+    spi_daisy_set_nss_high();
+
     spi_enable(SPI2);
+
+    spi_daisy_wait();
+    spi_daisy_set_nss_low();
 
     daisy_is_master = true;
 }
@@ -112,9 +123,6 @@ void spi_daisy_init_slave()
 
     spi_set_slave_mode(SPI2);
 
-    nvic_enable_irq(NVIC_SPI2_IRQ);
-    spi_enable_rx_buffer_not_empty_interrupt(SPI2);
-
     /* PB12: SPI2_NSS (NSS input in slave mode) */
     gpios = GPIO12;
     gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLUP, gpios);
@@ -125,6 +133,45 @@ void spi_daisy_init_slave()
     exti_select_source(EXTI12, GPIOB);
     exti_set_trigger(EXTI12, EXTI_TRIGGER_RISING);
     exti_enable_request(EXTI12);
+
+    /* Configure DMA */
+    rcc_periph_clock_enable(RCC_DMA1);
+
+    uint8_t *dispbuf = (uint8_t *)display_get_backbuffer();
+
+    /* SPI2 RX */
+    dma_stream_reset(DMA1, DMA_STREAM3);
+    dma_set_priority(DMA1, DMA_STREAM3, DMA_SxCR_PL_VERY_HIGH);
+    dma_set_memory_size(DMA1, DMA_STREAM3, DMA_SxCR_MSIZE_8BIT);
+    dma_set_peripheral_size(DMA1, DMA_STREAM3, DMA_SxCR_PSIZE_8BIT);
+    dma_enable_memory_increment_mode(DMA1, DMA_STREAM3);
+    dma_enable_circular_mode(DMA1, DMA_STREAM3);
+    dma_set_transfer_mode(DMA1, DMA_STREAM3,
+            DMA_SxCR_DIR_PERIPHERAL_TO_MEM);
+    dma_set_peripheral_address(DMA1, DMA_STREAM3, (uint32_t) &SPI2_DR);
+    dma_set_memory_address(DMA1, DMA_STREAM3, (uint32_t) dispbuf);
+    dma_set_number_of_data(DMA1, DMA_STREAM3, sizeof(DisplayBuf));
+    dma_channel_select(DMA1, DMA_STREAM3, DMA_SxCR_CHSEL_0);
+    dma_enable_stream(DMA1, DMA_STREAM3);
+
+    spi_enable_rx_dma(SPI2);
+
+    /* SPI2 TX */
+    dma_stream_reset(DMA1, DMA_STREAM4);
+    dma_set_priority(DMA1, DMA_STREAM4, DMA_SxCR_PL_HIGH);
+    dma_set_memory_size(DMA1, DMA_STREAM4, DMA_SxCR_MSIZE_8BIT);
+    dma_set_peripheral_size(DMA1, DMA_STREAM4, DMA_SxCR_PSIZE_8BIT);
+    dma_enable_memory_increment_mode(DMA1, DMA_STREAM4);
+    dma_enable_circular_mode(DMA1, DMA_STREAM4);
+    dma_set_transfer_mode(DMA1, DMA_STREAM4,
+            DMA_SxCR_DIR_MEM_TO_PERIPHERAL);
+    dma_set_peripheral_address(DMA1, DMA_STREAM4, (uint32_t) &SPI2_DR);
+    dma_set_memory_address(DMA1, DMA_STREAM4, (uint32_t) dispbuf);
+    dma_set_number_of_data(DMA1, DMA_STREAM4, sizeof(DisplayBuf));
+    dma_channel_select(DMA1, DMA_STREAM4, DMA_SxCR_CHSEL_0);
+    dma_enable_stream(DMA1, DMA_STREAM4);
+
+    spi_enable_tx_dma(SPI2);
 
     spi_enable(SPI2);
 
@@ -138,11 +185,14 @@ void spi_daisy_set_nss_low()
 
 void spi_daisy_set_nss_high()
 {
+    gpio_set(GPIOB, GPIO12);
+}
+
+void spi_daisy_wait()
+{
     /* Wait for any pending transmission to complete */
     while (!(SPI_SR(SPI2) & SPI_SR_TXE));
     while ((SPI_SR(SPI2) & SPI_SR_BSY));
-
-    gpio_set(GPIOB, GPIO12);
 }
 
 void spi_daisy_send(uint16_t data)

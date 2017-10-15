@@ -98,13 +98,14 @@ static int control_request(usbd_device *usbd_dev,
 
     switch (req->bRequest) {
         case USB_RGBM_SWAPBUFFERS:
+            spi_daisy_wait();
             spi_daisy_set_nss_high();
             display_swapbuffers();
             dispbuf_pos = 0;
             spi_daisy_set_nss_low();
 
             /* TODO: figure out a better way to sync displays on SPI */
-            usleep(500);
+            usleep(5000);
 
             return 1;
         case USB_RGBM_CLEAR:
@@ -142,6 +143,7 @@ static void data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 
     (void)ep;
 
+    // TODO: DMA
     for (i = 0; i < len; i++) {
         /*printf("0x%x ", dispbuf[dispbuf_pos]);*/
         spi_daisy_send(dispbuf[dispbuf_pos]);
