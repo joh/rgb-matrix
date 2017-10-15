@@ -2,10 +2,23 @@
 The board is based around an STM32F405 microcontroller which drives each LED
 with 16-bit hardware PWM. It also handles USB, SPI, etc.
 
-<img src="img/rgb-matrix-kicad-3d.png" width="50%" height="50%" alt="RGB Matrix PCB">
+<img src="img/pcb-kicad-3d.png" width="50%" height="50%" alt="RGB Matrix PCB">
 
 Each column is driven by SN74AC244 buffers, while the rows are driven by
 TBD62783 (common anode) or TBD62083/ULN2803A (common cathode).
+
+## PCB
+The PCB is 4 layers and connects with the LED matrix like a backpack.
+
+<img src="img/pcb-front.jpg" width="50%" height="50%" alt="PCB front">
+<img src="img/pcb-back.jpg" width="50%" height="50%" alt="PCB back">
+
+The PCB was designed to handle currents up to 6A, which typically means max 8
+panels in series, with the limiting component being the pin headers.
+
+<img src="img/pcb-matrix-front.jpg" width="50%" height="50%" alt="RGB Matrix front">
+<img src="img/pcb-matrix-side.jpg" width="50%" height="50%" alt="RGB Matrix side">
+<img src="img/pcb-matrix-back.jpg" width="50%" height="50%" alt="RGB Matrix back">
 
 ## BOM
 TODO
