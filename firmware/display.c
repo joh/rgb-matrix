@@ -6,7 +6,7 @@
 #include <libopencm3/stm32/timer.h>
 
 #include "display.h"
-#include "spi.h"
+#include "spi-daisy.h"
 
 /*
  * Rows

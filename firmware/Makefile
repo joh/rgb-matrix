@@ -19,7 +19,7 @@
 
 BINARY = main
 
-OBJS = display.o utils.o usb.o spi.o tests.o
+OBJS = display.o utils.o usb.o spi.o spi-daisy.o tests.o
 
 OPENCM3_DIR=../../stm32/libopencm3-examples/libopencm3
 LDSCRIPT = stm32f4-discovery.ld

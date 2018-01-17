@@ -10,7 +10,7 @@
 
 #include "usb.h"
 #include "display.h"
-#include "spi.h"
+#include "spi-daisy.h"
 #include "utils.h"
 
 static const struct usb_device_descriptor dev = {

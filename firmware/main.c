@@ -11,6 +11,7 @@
 #include "utils.h"
 #include "usb.h"
 #include "spi.h"
+#include "spi-daisy.h"
 #include "tests.h"
 
 /* For semihosting on newlib */
