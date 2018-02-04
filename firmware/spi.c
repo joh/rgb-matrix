@@ -18,21 +18,35 @@ static volatile uint8_t spi_bytes_rcvd = 0;
 /* Write position display backbuffer */
 static __IO unsigned int dispbuf_pos = 0;
 
-/* SPI slave */
-void spi3_isr(void)
+/* SPI packet */
+struct spi_packet {
+    uint8_t cmd;
+    uint8_t data[64];
+};
+
+/* FIFO of packets */
+#define FIFO_SIZE 16
+static __IO struct spi_packet spi_fifo[FIFO_SIZE];
+static __IO size_t fifo_write_pos = 0;
+static __IO size_t fifo_read_pos = 0;
+
+
+void dma1_stream2_isr(void)
 {
-    uint8_t *dispbuf = (uint8_t *)display_get_backbuffer();
-    uint8_t byte = SPI_DR(SPI3);
+    if (dma_get_interrupt_flag(DMA1, DMA_STREAM2, DMA_TCIF)) {
+        dma_clear_interrupt_flags(DMA1, DMA_STREAM2, DMA_TCIF);
 
-    /* Fill framebuffer with received byte */
-    dispbuf[dispbuf_pos] = byte;
-    dispbuf_pos = (dispbuf_pos + 1) % sizeof(DisplayBuf);
+        fifo_write_pos = (fifo_write_pos + 1) % FIFO_SIZE;
 
-    /* Forward next (oldest) byte in framebuffer to the daisy chain */
-    spi_daisy_write(dispbuf[dispbuf_pos]);
+#ifdef DEBUG
+        if (fifo_write_pos == fifo_read_pos) {
+            printf("OVF %d!\n", fifo_write_pos);
+        }
+#endif
 
-    /* Prepare next (oldest) byte in the framebuffer for the next transmission */
-    SPI_DR(SPI3) = dispbuf[dispbuf_pos];
+        dma_set_memory_address(DMA1, DMA_STREAM2, (uint32_t)&spi_fifo[fifo_write_pos]);
+        dma_enable_stream(DMA1, DMA_STREAM2);
+    }
 }
 
 void spi_slave_init()
@@ -54,21 +68,65 @@ void spi_slave_init()
     gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_PULLUP, gpios);
     gpio_set_af(GPIOA, GPIO_AF6, gpios);
 
-    /* Configure interrupt on rising edge of SPI3_NSS */
-    nvic_enable_irq(NVIC_EXTI15_10_IRQ);
-    exti_select_source(EXTI15, GPIOA);
-    exti_set_trigger(EXTI15, EXTI_TRIGGER_RISING);
-    exti_enable_request(EXTI15);
-
     /* Configure SPI slave */
     spi_set_dff_8bit(SPI3);
     spi_set_standard_mode(SPI3, 0); // Sets CPOL, CPHA
     spi_send_msb_first(SPI3);
     spi_set_slave_mode(SPI3);
 
-    /* Enable SPI interrupts */
-    nvic_enable_irq(NVIC_SPI3_IRQ);
-    spi_enable_rx_buffer_not_empty_interrupt(SPI3);
+    /* Configure DMA */
+    rcc_periph_clock_enable(RCC_DMA1);
+
+    /* SPI3 RX */
+    dma_stream_reset(DMA1, DMA_STREAM2);
+    dma_set_priority(DMA1, DMA_STREAM2, DMA_SxCR_PL_VERY_HIGH);
+    dma_set_memory_size(DMA1, DMA_STREAM2, DMA_SxCR_MSIZE_8BIT);
+    dma_set_peripheral_size(DMA1, DMA_STREAM2, DMA_SxCR_PSIZE_8BIT);
+    dma_enable_memory_increment_mode(DMA1, DMA_STREAM2);
+    dma_set_transfer_mode(DMA1, DMA_STREAM2,
+            DMA_SxCR_DIR_PERIPHERAL_TO_MEM);
+    dma_set_peripheral_address(DMA1, DMA_STREAM2, (uint32_t) &SPI3_DR);
+    dma_set_memory_address(DMA1, DMA_STREAM2, (uint32_t)&spi_fifo[0]);
+    dma_set_number_of_data(DMA1, DMA_STREAM2, sizeof(spi_fifo[0]));
+    dma_channel_select(DMA1, DMA_STREAM2, DMA_SxCR_CHSEL_0);
+    dma_enable_stream(DMA1, DMA_STREAM2);
+
+    spi_enable_rx_dma(SPI3);
+
+    /* DMA interrupts */
+    nvic_enable_irq(NVIC_DMA1_STREAM2_IRQ);
+    dma_enable_transfer_complete_interrupt(DMA1, DMA_STREAM2);
 
     spi_enable(SPI3);
+}
+
+void spi_poll(void)
+{
+    if (fifo_read_pos == fifo_write_pos)
+        // Nothing to do
+        return;
+
+    __IO struct spi_packet *pkt = &spi_fifo[fifo_read_pos];
+
+    if (pkt->cmd == SPI_CMD_WRITE) {
+        uint8_t *dispbuf = (uint8_t *)display_get_backbuffer();
+
+        for (unsigned int i = 0; i < sizeof(pkt->data); i++) {
+            spi_daisy_send(dispbuf[dispbuf_pos]);
+            dispbuf[dispbuf_pos] = pkt->data[i];
+            dispbuf_pos = (dispbuf_pos + 1) % sizeof(DisplayBuf);
+        }
+    } else if (pkt->cmd == SPI_CMD_SWAPBUFFERS) {
+        spi_daisy_wait();
+        spi_daisy_set_nss_high();
+        display_swapbuffers();
+        dispbuf_pos = 0;
+        spi_daisy_set_nss_low();
+
+        /* Vertical refresh rate is 160 hz, so wait for one whole period
+         * (6.25ms) to give all daisy chained displays time to swap */
+        usleep(6250);
+    }
+
+    fifo_read_pos = (fifo_read_pos + 1) % FIFO_SIZE;
 }

@@ -35,7 +35,7 @@ DEFS += -DDISPLAY_COMMON_ANODE
 endif
 
 ifeq ($(DEBUG),1)
-DEFS += -DENABLE_TRACE=1
+DEFS += -DDEBUG -DENABLE_TRACE=1
 endif
 
 include libopencm3.target.mk

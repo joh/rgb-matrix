@@ -22,6 +22,15 @@ static bool daisy_is_master = false;
 void exti15_10_isr(void)
 {
     exti_reset_request(EXTI15 | EXTI12);
+
+#ifdef DEBUG
+    // Check for partial frame
+    uint32_t ndtr = DMA_SNDTR(DMA1, DMA_STREAM3);
+    if (ndtr != sizeof(DisplayBuf)) {
+        printf("DMA_NDTR=%lu LISR=%lx\n", ndtr, DMA_LISR(DMA1));
+    }
+#endif
+
     /* Signal swapbuffers. The display code will
      * call spi_daisy_swapbuffers() when complete. */
     display_swapbuffers_nowait();
@@ -71,9 +80,7 @@ void spi_daisy_init_master()
     gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, gpios);
 
     /* Don't need interrupts in master mode */
-    nvic_disable_irq(NVIC_SPI2_IRQ);
-    spi_disable_rx_buffer_not_empty_interrupt(SPI2);
-
+    nvic_disable_irq(NVIC_EXTI15_10_IRQ);
     exti_disable_request(EXTI12);
 
     /* No DMA in master mode */

@@ -104,8 +104,9 @@ static int control_request(usbd_device *usbd_dev,
             dispbuf_pos = 0;
             spi_daisy_set_nss_low();
 
-            /* TODO: figure out a better way to sync displays on SPI */
-            usleep(5000);
+            /* Vertical refresh rate is 160 hz, so wait for one whole period
+             * (6.25ms) to give all daisy chained displays time to swap */
+            usleep(6250);
 
             return 1;
         case USB_RGBM_CLEAR:

@@ -34,6 +34,7 @@ int main(void)
 
     while (1) {
         usb_poll();
+        spi_poll();
     }
 
     while (1) {

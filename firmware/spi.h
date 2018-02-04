@@ -6,6 +6,6 @@
 #define SPI_CMD_SWAPBUFFERS 0x02
 
 void spi_slave_init(void);
-void spi_slave_swapbuffers(void);
+void spi_poll(void);
 
 #endif
