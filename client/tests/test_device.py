@@ -3,9 +3,10 @@ from rgbmatrix import RGBMatrix, Frame
 import numpy as np
 import time
 from itertools import cycle
+from os import environ
 
 dev = None
-layout = [[1,2]]
+layout = [[4,3],[1,2]]
 num_height = len(layout)
 num_width = len(layout[0])
 height = num_height * 8
@@ -13,7 +14,8 @@ width = num_width * 8
 
 def setup_module():
     global dev
-    dev = RGBMatrix(layout=layout)
+    backend = environ.get('RGBMATRIX_BACKEND', 'usb')
+    dev = RGBMatrix(layout=layout, backend=backend)
 
 def teardown_module():
     global dev
@@ -21,7 +23,7 @@ def teardown_module():
     dev.swapbuffers()
     del dev
 
-brightness = 0xfff
+brightness = 0x7ff0
 
 colors = np.array(
     [[1, 0, 0],
@@ -47,7 +49,7 @@ def test_columns():
             dev.write_frame(frame)
             dev.swapbuffers()
 
-            time.sleep(0.1)
+            time.sleep(0.01)
 
 def test_rows():
     for c in colors:
@@ -58,11 +60,9 @@ def test_rows():
             dev.write_frame(frame)
             dev.swapbuffers()
 
-            time.sleep(0.1)
+            time.sleep(0.01)
 
 def test_swapbuffers():
-    dev = RGBMatrix()
-
     for i in range(100):
         dev.clear(brightness, 0, 0)
         dev.swapbuffers()
@@ -107,8 +107,6 @@ def test_brightness():
 
 
 def test_white():
-    dev = RGBMatrix()
-
     b = 0xffff
     dev.clear(b, b, b)
     dev.swapbuffers()
@@ -136,19 +134,17 @@ def test_fade():
             dev.swapbuffers()
 
 def test_fade2():
-    frame = Frame(size=(16,8), color=(0, 0, 0), dtype='uint16')
+    frame = Frame(size=(width, height), color=(0, 0, 0), dtype='uint16')
     for c in colors:
         for k in range(255):
             frame[::] = c * k ** 2
             dev.write_frame(frame)
             dev.swapbuffers()
-            time.sleep(.0005)
 
         for k in range(255, 0, -1):
             frame[::] = c * k ** 2
             dev.write_frame(frame)
             dev.swapbuffers()
-            time.sleep(.0005)
 
 
 def test_gamma():
