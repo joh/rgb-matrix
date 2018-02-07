@@ -19,7 +19,7 @@
 
 BINARY = main
 
-OBJS = display.o utils.o usb.o spi.o tests.o
+OBJS = display.o utils.o usb.o spi.o spi-daisy.o trace.o tests.o
 
 OPENCM3_DIR=../../stm32/libopencm3-examples/libopencm3
 LDSCRIPT = stm32f4-discovery.ld
@@ -27,24 +27,25 @@ LDSCRIPT = stm32f4-discovery.ld
 # Set to 1 if LED matrix is common anode
 DISPLAY_COMMON_ANODE ?= 1
 
-# DEBUG=1 enables semihosting
-DEBUG ?= 0
+# DEBUG=1 enables SWO debug
+DEBUG ?= 1
 
 ifeq ($(DISPLAY_COMMON_ANODE),1)
 DEFS += -DDISPLAY_COMMON_ANODE
 endif
 
 ifeq ($(DEBUG),1)
-LDFLAGS += --specs=rdimon.specs
-LDLIBS += -lrdimon
-DEFS += -DENABLE_SEMIHOSTING=1
+DEFS += -DDEBUG -DENABLE_TRACE=1
 endif
 
 include libopencm3.target.mk
 
-console:
+itm.fifo:
+	mkfifo $@
+
+console: itm.fifo
+	itmdump -f itm.fifo & \
 	$(OOCD) -f interface/$(OOCD_INTERFACE).cfg \
 		    -f board/$(OOCD_BOARD).cfg \
-		    -c "init" -c "reset init" \
-		    -c "arm semihosting enable" \
-		    -c "reset"
+		    -c "tpiu config internal itm.fifo uart off 168000000" \
+	wait

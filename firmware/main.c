@@ -11,10 +11,9 @@
 #include "utils.h"
 #include "usb.h"
 #include "spi.h"
+#include "spi-daisy.h"
 #include "tests.h"
-
-/* For semihosting on newlib */
-extern void initialise_monitor_handles(void);
+#include "trace.h"
 
 static void clock_init(void)
 {
@@ -23,12 +22,10 @@ static void clock_init(void)
 
 int main(void)
 {
-#if defined(ENABLE_SEMIHOSTING) && (ENABLE_SEMIHOSTING)
-    initialise_monitor_handles();
-#endif
     clock_init();
-    display_init();
     systick_init();
+    trace_init();
+    display_init();
     spi_daisy_init();
     spi_slave_init();
     usb_init();
@@ -37,6 +34,7 @@ int main(void)
 
     while (1) {
         usb_poll();
+        spi_poll();
     }
 
     while (1) {

@@ -139,3 +139,33 @@ def test_layout_2x2():
     assert_array_equal(subframes[2], subframe2)
     assert_array_equal(subframes[3], subframe1)
 
+def test_layout_3x2():
+    layout = [[0, 3, 4],
+              [1, 2, 0]]
+    layout = Layout(layout, (2, 2))
+
+    frame = np.array([[1,   2,  3,  4,  5,  6],
+                      [7,   8,  9, 10, 11, 12],
+                      [13, 14, 15, 16, 17, 18],
+                      [19, 20, 21, 22, 23, 24]])
+
+    subframe1 = layout.subframe(frame, 1)
+    assert_array_equal(subframe1, [[13, 14], [19, 20]])
+
+    subframe2 = layout.subframe(frame, 2)
+    assert_array_equal(subframe2, [[15, 16], [21, 22]])
+
+    subframe3 = layout.subframe(frame, 3)
+    assert_array_equal(subframe3, [[3, 4], [9, 10]])
+
+    subframe4 = layout.subframe(frame, 4)
+    assert_array_equal(subframe4, [[5, 6], [11, 12]])
+
+    # Reversed order
+    subframes = list(layout.subframe_iter(frame))
+
+    assert_array_equal(subframes[0], subframe4)
+    assert_array_equal(subframes[1], subframe3)
+    assert_array_equal(subframes[2], subframe2)
+    assert_array_equal(subframes[3], subframe1)
+

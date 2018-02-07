@@ -10,7 +10,7 @@
 
 #include "usb.h"
 #include "display.h"
-#include "spi.h"
+#include "spi-daisy.h"
 #include "utils.h"
 
 static const struct usb_device_descriptor dev = {
@@ -98,13 +98,15 @@ static int control_request(usbd_device *usbd_dev,
 
     switch (req->bRequest) {
         case USB_RGBM_SWAPBUFFERS:
+            spi_daisy_wait();
             spi_daisy_set_nss_high();
             display_swapbuffers();
             dispbuf_pos = 0;
             spi_daisy_set_nss_low();
 
-            /* TODO: figure out a better way to sync displays on SPI */
-            usleep(500);
+            /* Vertical refresh rate is 160 hz, so wait for one whole period
+             * (6.25ms) to give all daisy chained displays time to swap */
+            usleep(6250);
 
             return 1;
         case USB_RGBM_CLEAR:
@@ -142,6 +144,7 @@ static void data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 
     (void)ep;
 
+    // TODO: DMA
     for (i = 0; i < len; i++) {
         /*printf("0x%x ", dispbuf[dispbuf_pos]);*/
         spi_daisy_send(dispbuf[dispbuf_pos]);

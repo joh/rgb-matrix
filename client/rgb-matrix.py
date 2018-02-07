@@ -12,7 +12,7 @@ from rgbmatrix.frame import *
 def create_rgbm(args):
     layout = list(ast.literal_eval(args.layout))
     brightness = np.clip(args.brightness, 0, 1) * 0xffff
-    rgbm = RGBMatrix(layout=layout, gamma=args.gamma, brightness=brightness)
+    rgbm = RGBMatrix(layout=layout, gamma=args.gamma, brightness=brightness, backend=args.backend)
 
     return rgbm
 
@@ -23,8 +23,7 @@ def cmd_clear(args):
     g = int(args.g, 16)
     b = int(args.b, 16)
 
-    frame = Frame(size=rgbm.size, color=(r, g, b), dtype='uint16')
-    rgbm.write_frame(frame)
+    rgbm.clear(r, g, b)
 
     if not args.no_swapbuffers:
         rgbm.swapbuffers()
@@ -151,9 +150,10 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('-l', '--layout', type=str, default="[[1,2],[3,4]]")
+    parser.add_argument('-l', '--layout', type=str, default="[[4,3],[1,2]]")
     parser.add_argument('-g', '--gamma', type=float, default=2.2)
     parser.add_argument('-b', '--brightness', type=float, default=1.0)
+    parser.add_argument('--backend', choices=('usb', 'spi'), default='usb')
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
