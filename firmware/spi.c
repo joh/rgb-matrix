@@ -106,6 +106,10 @@ void spi_poll(void)
         // Nothing to do
         return;
 
+    if (!spi_daisy_is_master())
+        // Become master
+        spi_daisy_init_master();
+
     __IO struct spi_packet *pkt = &spi_fifo[fifo_read_pos];
 
     if (pkt->cmd == SPI_CMD_WRITE) {
