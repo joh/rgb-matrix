@@ -79,11 +79,17 @@ def cmd_image(args):
     image = Image.open(args.image)
     images = extract_frames(image)
 
+    if args.resize:
+        sz = (np.array(rgbm.size) * args.resize).astype(int)
+        images = [img.resize(sz) for img in images]
+
     if len(images) == 1:
         show_image(rgbm, images[0])
     else:
         # animation
         duration = image.info['duration']
+        if duration == 0:
+            duration = 100
         if args.loop:
             images = cycle(images)
 
@@ -181,6 +187,7 @@ if __name__ == '__main__':
 
     parser_image = subparsers.add_parser('image', help='show image')
     parser_image.add_argument('image')
+    parser_image.add_argument('-r', '--resize', type=float)
     parser_image.add_argument('--loop', type=bool, default=True)
     parser_image.set_defaults(func=cmd_image)
 
