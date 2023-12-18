@@ -63,14 +63,10 @@ def show_image(rgbm, image):
 
 def extract_frames(image):
     frames = []
-    i = 0
-    while True:
-        try:
-            image.seek(i)
-        except EOFError:
-            break
-        frames.append(image.copy())
-        i += 1
+    for i in range(image.n_frames):
+        image.seek(i)
+        frame = image.copy().convert("RGB")
+        frames.append(frame)
     return frames
 
 def cmd_image(args):
